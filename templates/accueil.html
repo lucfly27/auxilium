@@ -9,10 +9,10 @@
 <body>
     <h1> Bienvenue sur Auxilium </h1>
     <p> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
-    <button> Partagez votre fiche de revisions  </button>
-    <button> Rechercher une fiche de revisions  </button>
+    <button> Partagez votre fiche de révisions </button>
+    <button> Rechercher une fiche de révisions </button>
 
-    <button id="openModalBtn" href=""/>
+    <button id="openModalBtn">Compte</button>
 
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -22,9 +22,11 @@
                 <input type="text" name="username" placeholder="Nom d'utilisateur" required>
                 <input type="password" name="password" placeholder="Mot de passe" required>
                 <button type="submit">Se connecter</button>
+                <p>Vous n'avez pas de compte ? <a href="/inscription">Inscrivez-vous ici</a></p>
             </form>
         </div>
     </div>
+
     <script>
         const modal = document.getElementById("myModal");
         const openModalBtn = document.getElementById("openModalBtn");
