@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'ta_cle_secrete'  # Clé secrète pour sécuriser les sessions
@@ -20,7 +21,7 @@ def accueil():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Se connecte a la bdd, recherche l'utilisateur et le stock dans la session
+    Se connecte à la base de données, recherche l'utilisateur et le stock dans la session
     """
     if request.method == 'POST':
         username = request.form['username']
@@ -29,19 +30,38 @@ def login():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute('SELECT * FROM utilisateurs WHERE username = ? AND password = ?', (username, password))
+        cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
         user = cursor.fetchone()
 
-        if user:
+        if user and check_password_hash(user['password'], password):
             session['username'] = username
             flash(f'Bienvenue {username}!', 'success')
-            return redirect(url_for('accueil'))
+            return redirect(url_for('home'))
         else:
-            flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
+            flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')  
 
         conn.close()
 
     return render_template('accueil.html')
+
+
+@app.route('/home')
+def home():
+    """
+    Affiche la page d'accueil avec le nom d'utilisateur
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    return render_template('home.html', username=username)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('Vous avez été déconnecté avec succès.', 'success')
+    return redirect(url_for('accueil'))
 
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
@@ -51,7 +71,7 @@ def inscription():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        password = request.form['password']
+        password = hash(request.form['password']) 
 
         conn = get_db_connection()
         cursor = conn.cursor()

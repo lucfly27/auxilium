@@ -14,10 +14,22 @@
 
     <button id="openModalBtn">Compte</button>
 
-    <div id="myModal" class="modal">
+    <div id="myModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Connexion</h2>
+            <span class="close" aria-label="Fermer le modal">&times;</span>
+            <h2 id="modalTitle">Connexion</h2>
+            
+            <!-- Espace pour afficher les messages flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            
             <form method="POST" action="/login">
                 <input type="text" name="username" placeholder="Nom d'utilisateur" required>
                 <input type="password" name="password" placeholder="Mot de passe" required>
@@ -26,6 +38,7 @@
             </form>
         </div>
     </div>
+    
 
     <script>
         const modal = document.getElementById("myModal");
