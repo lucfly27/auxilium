@@ -18,10 +18,37 @@ def get_db_connection():
 def accueil():
     return render_template('accueil.html')
 
+def init_db():
+    """
+    Crée la base de données et la table utilisateurs si elles n'existent pas.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS utilisateurs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        );
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS fiche (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            matiere TEXT UNIQUE NOT NULL,
+            niveau TEXT NOT NULL
+        );
+    ''')
+
+    conn.commit()  # Sauvegarde les modifications
+    conn.close()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Se connecte à la base de données, recherche l'utilisateur et le stock dans la session
+    Se connecte à la base de données, recherche l'utilisateur et le stocke dans la session
     """
     if request.method == 'POST':
         username = request.form['username']
@@ -35,14 +62,13 @@ def login():
 
         if user and check_password_hash(user['password'], password):
             session['username'] = username
-            flash(f'Bienvenue {username}!', 'success')
             return redirect(url_for('home'))
         else:
-            flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')  
-
+            flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
+            return redirect(url_for('accueil', modal=True))
         conn.close()
-
     return render_template('accueil.html')
+
 
 
 @app.route('/home')
@@ -52,15 +78,17 @@ def home():
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
-        return redirect(url_for('login'))
+        return redirect(url_for('login', modal=True))
     
     username = session['username']
     return render_template('home.html', username=username)
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
-    flash('Vous avez été déconnecté avec succès.', 'success')
+    if 'username' in session:
+        username = session['username']
+        session.pop('username', None)
+        print(username, "vient de se deconnecter")
     return redirect(url_for('accueil'))
 
 @app.route('/inscription', methods=['GET', 'POST'])
@@ -71,7 +99,7 @@ def inscription():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        password = hash(request.form['password']) 
+        password = generate_password_hash(request.form['password']) 
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -79,8 +107,8 @@ def inscription():
         try:
             cursor.execute('INSERT INTO utilisateurs (username, email, password) VALUES (?, ?, ?)', 
                            (username, email, password))
-            conn.commit()  # Sauvegarde des modifications
-            flash(f'Compte créé avec succès pour {username}!', 'success')
+            conn.commit()  
+            print(f'Compte créé avec succès pour {username}!')
             return redirect(url_for('accueil'))
         except sqlite3.IntegrityError:
             flash('Cet utilisateur ou cet email existe déjà', 'error')
@@ -89,4 +117,5 @@ def inscription():
     return render_template('inscription.html')
 
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
