@@ -1,5 +1,6 @@
 body {
     background-color: #f8f7f9;
+    font-family: Arial, sans-serif;
 }
 
 button {
@@ -11,6 +12,7 @@ button {
     border: none;
     border-radius: 5px;
 }
+
 
 .modal {
     display: none;
@@ -57,4 +59,49 @@ input {
     margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+.flash-messages {
+    margin: 8px;
+}
+
+.menu-deroulant {
+    height: 100%; 
+    width: 0; 
+    position: fixed;
+    top: 0;
+    right: 0; 
+    background-color: #fcafe9;
+    overflow-x: hidden; 
+    transition: 0.5s; 
+    padding-top: 60px; 
+}
+
+.menu-deroulant a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+}
+
+
+.menu-deroulant .closebtn {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    font-size: 30px;
+}
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #fcafe9;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
 }

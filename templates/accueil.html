@@ -9,56 +9,68 @@
 <body>
     <h1> Bienvenue sur Auxilium </h1>
     <p> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
-    <button> Partagez votre fiche de révisions </button>
-    <button> Rechercher une fiche de révisions </button>
+    <button> Explorer </button>
 
-    <button id="openModalBtn">Compte</button>
+    <button id="openModalBtn", onclick="openModal()">Compte</button>
 
-    <div id="myModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+
+    <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close" aria-label="Fermer le modal">&times;</span>
-            <h2 id="modalTitle">Connexion</h2>
-            
-            <!-- Espace pour afficher les messages flash -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul>
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
-            
-            <form method="POST" action="/login">
-                <input type="text" name="username" placeholder="Nom d'utilisateur" required>
-                <input type="password" name="password" placeholder="Mot de passe" required>
+            <span class="close">&times;</span>
+            <h2>Connexion</h2>
+            <form method="POST" action="{{ url_for('login') }}">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" name="username" required>
+                
+                <label for="password">Mot de passe</label>
+                <input type="password" name="password" required>
+                
+                <!-- Section pour les messages flash -->
+            <div id="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-messages flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
                 <button type="submit">Se connecter</button>
-                <p>Vous n'avez pas de compte ? <a href="/inscription">Inscrivez-vous ici</a></p>
             </form>
         </div>
     </div>
-    
 
+    <!-- Script pour gérer le modal -->
     <script>
-        const modal = document.getElementById("myModal");
-        const openModalBtn = document.getElementById("openModalBtn");
-        const closeModalBtn = document.getElementsByClassName("close")[0];
-
-        openModalBtn.onclick = function() {
-            modal.style.display = "block";
+        // Fonction pour ouvrir le modal
+        function openModal() {
+            document.getElementById('loginModal').style.display = 'block';
         }
 
-        closeModalBtn.onclick = function() {
-            modal.style.display = "none";
+        // Fonction pour fermer le modal
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
         }
 
+        // Fermer le modal quand on clique en dehors
         window.onclick = function(event) {
+            var modal = document.getElementById('loginModal');
             if (event.target == modal) {
-                modal.style.display = "none";
+                closeModal();
             }
         }
+
+        // Vérifier si "modal=True" est dans l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('modal')) {
+            openModal();  // Ouvrir le modal si le paramètre "modal" est présent
+        }
+
+        // Ajouter un event listener pour fermer le modal quand on clique sur la croix
+        document.querySelector('.close').addEventListener('click', closeModal);
     </script>
 </body>
 </html>
-
