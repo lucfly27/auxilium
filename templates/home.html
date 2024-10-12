@@ -4,10 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Bienvenue</title>
+    <title>Auxilium</title>
 </head>
 <body>
     <h1>Bienvenue, {{ username }}!</h1>
-    <a href="{{ url_for('logout') }}">Se déconnecter</a>
+    <button> Ajoutez une fiche </button>
+    <input id="recherche" type="search">
+    <button class="openbtn" onclick="openMenu()">⚙</button>
+
+    <div id="menuDeroulant" class="menu-deroulant">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
+        <a href="{{ url_for('logout') }}">Deconnexion</a>
+    </div>
+
+    <script>
+        function openMenu() {
+            document.getElementById("menuDeroulant").style.width = "250px";
+        }
+    
+        function closeMenu() {
+            document.getElementById("menuDeroulant").style.width = "0";
+        }
+    </script>
+
 </body>
 </html>
