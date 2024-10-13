@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = 'ta_cle_secrete'  # Clé secrète pour sécuriser les sessions
+app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
 
 
 def get_db_connection():
@@ -42,7 +42,7 @@ def init_db():
         );
     ''')
 
-    conn.commit()  # Sauvegarde les modifications
+    conn.commit()  
     conn.close()
 
 @app.route('/login', methods=['GET', 'POST'])
