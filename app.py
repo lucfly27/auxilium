@@ -62,6 +62,7 @@ def login():
 
         if user and check_password_hash(user['password'], password):
             session['username'] = username
+            print(username, "vient de se connecter")
             return redirect(url_for('home'))
         else:
             flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
