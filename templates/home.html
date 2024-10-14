@@ -11,11 +11,12 @@
     <input class = search id="recherche" type="search" placeholder="Rechercher une fiche"> 
     <button class="addbtn"> + </button>
     <button class="openbtn" onclick="openMenu()">
-        <img class="user" src="https://i.imgur.com/MYQ6XOj.png" alt="Icon"> 
+        <img class="user" src="{{ url_for('static', filename='user.png') }}" alt="Icon"> 
         {{ username }}
       </button>
       
     <div id="menuDeroulant" class="menu-deroulant">
+        <img src="{{ url_for('static', filename='user.png')}}" class="user" alt ="Icon">
         <a href="javascript:void(0)" class="closebtn" onclick="closeMenu()">&times;</a>
         <a href="{{ url_for('logout') }}">Deconnexion</a>
     </div>
