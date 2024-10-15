@@ -17,6 +17,18 @@
         <button type="submit">S'inscrire</button>
     </form>
 
+    <div id="flash-messages" class="text">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-messages flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <p class="text">Vous avez déjà un compte ? <a href="/?modal=True"> Connectez-vous ici</a></p>
 </body>
 </html>

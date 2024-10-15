@@ -117,6 +117,15 @@ def inscription():
 
     return render_template('inscription.html')
 
+@app.route('/addcard')
+def addcard():
+    """
+    ouvre un explorateur de fichier et permet d'ajouter une fiche en y mettant une legende et une matiere
+    """
+    print("1")
+    if 'username' in session:
+        print("2")
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)

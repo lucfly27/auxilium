@@ -9,7 +9,7 @@
 <body>
     <h1>Bienvenue sur Auxilium !</h1>
     <input class = search id="recherche" type="search" placeholder="Rechercher une fiche"> 
-    <button  class="addbtn"> + </button>
+    <a href="{{ url_for('addcard') }}" class="addbtn"> + </a>
     <button class="openbtn" onclick="openMenu()">
         <img class="user" src="{{ url_for('static', filename='user.png') }}" alt="Icon"> 
         {{ username }}
