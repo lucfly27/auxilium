@@ -1,16 +1,20 @@
 import sqlite3
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
 
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db_connection():
     """
     Fonction pour se connecter à la base de données
     """
-    conn = sqlite3.connect('utilisateurs.db')
+    conn = sqlite3.connect('auxilium.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -20,7 +24,7 @@ def accueil():
 
 def init_db():
     """
-    Crée la base de données et la table utilisateurs si elles n'existent pas.
+    Crée la base de données et les tables si elles n'existent pas.
     """
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -37,8 +41,9 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS fiche (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            matiere TEXT UNIQUE NOT NULL,
-            niveau TEXT NOT NULL
+            matiere TEXT NOT NULL,
+            niveau TEXT NOT NULL,
+            image_url TEXT NOT NULL
         );
     ''')
 
@@ -48,7 +53,7 @@ def init_db():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Se connecte à la base de données, recherche l'utilisateur et le stocke dans la session
+    Se connecte à la base de données et connecte l'utilisateurs
     """
     if request.method == 'POST':
         username = request.form['username']
@@ -68,14 +73,13 @@ def login():
             flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
             return redirect(url_for('accueil', modal=True))
         conn.close()
+    
     return render_template('accueil.html')
-
-
 
 @app.route('/home')
 def home():
     """
-    Affiche la page d'accueil avec le nom d'utilisateur
+    Affiche la page d'accueil
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
@@ -95,7 +99,7 @@ def logout():
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
     """
-    Se connecte a la bdd, insere les données et les sauvegardes 
+    Inscription d'un nouvel utilisateur
     """
     if request.method == 'POST':
         username = request.form['username']
@@ -113,18 +117,51 @@ def inscription():
             return redirect(url_for('accueil'))
         except sqlite3.IntegrityError:
             flash('Cet utilisateur ou cet email existe déjà', 'error')
-        conn.close()
+        finally:
+            conn.close()
 
     return render_template('inscription.html')
 
-@app.route('/addcard')
+def allowed_file(filename):
+    """
+    Vérifie si le fichier ne contient rien d'offensant
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
+@app.route('/addcard', methods=['GET', 'POST'])
 def addcard():
     """
-    ouvre un explorateur de fichier et permet d'ajouter une fiche en y mettant une legende et une matiere
+    Ajoute une fiche au site en selectionant une matiere, un niveau, une image
     """
-    print("1")
-    if 'username' in session:
-        print("2")
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    if request.method == 'POST':
+        matiere = request.form['matiere']
+        niveau = request.form['niveau']
+        image = request.files['image']
+
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            try:
+                image.save(image_path) 
+                conn = get_db_connection()
+                cursor = conn.cursor()
+
+                cursor.execute('INSERT INTO fiche (matiere, niveau, image_url) VALUES (?, ?, ?)', 
+                               (matiere, niveau, image_path))
+                conn.commit()
+                flash('Fiche ajoutée avec succès!', 'success')
+            except Exception as e:
+                flash(f"Erreur: {str(e)}", 'error')
+            finally:
+                conn.close()
+        else:
+            flash('Type de fichier non autorisé', 'error')
+
+    return render_template('addcard.html')
 
 if __name__ == '__main__':
     init_db()
