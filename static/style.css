@@ -170,7 +170,6 @@ input {
     text-decoration: none;
 }
 
-
 .usermd {
     width:50px; 
     height:50px;
@@ -178,4 +177,17 @@ input {
     top: 10px;
     left: 20px;
     font-size: 30px;
+}
+
+.card {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.card a {
+    font-size: 20px;
+    margin-top: 10px; 
 }

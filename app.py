@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db_connection():
@@ -145,6 +145,7 @@ def addcard():
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            conn=None
             try:
                 image.save(image_path) 
                 conn = get_db_connection()
@@ -155,20 +156,32 @@ def addcard():
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
             except Exception as e:
-                flash(f"Erreur: {str(e)}", 'error')
+                print(f"Erreur: {str(e)}")
+                flash(f"Erreur: Fiche non ajoutée", 'error')
             finally:
-                conn.close()
+                if conn:
+                    conn.close()
         else:
             flash('Type de fichier non autorisé', 'error')
-
     return render_template('addcard.html')
 
 @app.route('/fiches')
-def card():
+def fiches():
     """
     Affiche les fiches dans une page
     """
-    print('1')
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM fiche')
+    fiches = cursor.fetchall() 
+
+    conn.close()
+
+    return render_template('fiches.html', fiches=fiches)
 
 
 if __name__ == '__main__':

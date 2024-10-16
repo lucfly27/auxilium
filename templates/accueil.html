@@ -44,19 +44,15 @@
         </div>
     </div>
 
-    <!-- Script pour gérer le modal -->
     <script>
-        // Fonction pour ouvrir le modal
         function openModal() {
             document.getElementById('loginModal').style.display = 'block';
         }
 
-        // Fonction pour fermer le modal
         function closeModal() {
             document.getElementById('loginModal').style.display = 'none';
         }
 
-        // Fermer le modal quand on clique en dehors
         window.onclick = function(event) {
             var modal = document.getElementById('loginModal');
             if (event.target == modal) {
@@ -64,13 +60,11 @@
             }
         }
 
-        // Vérifier si "modal=True" est dans l'URL
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('modal')) {
-            openModal();  // Ouvrir le modal si le paramètre "modal" est présent
+            openModal();  
         }
 
-        // Ajouter un event listener pour fermer le modal quand on clique sur la croix
         document.querySelector('.close').addEventListener('click', closeModal);
     </script>
 </body>

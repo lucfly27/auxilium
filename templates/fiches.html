@@ -9,35 +9,20 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Liste des Fiches</h1>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Matière</th>
-                    <th>Niveau</th>
-                    <th>Image</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="card">
                 {% for fiche in fiches %}
-                <tr>
-                    <td>{{ fiche['id'] }}</td>
-                    <td>{{ fiche['matiere'] }}</td>
-                    <td>{{ fiche['niveau'] }}</td>
-                    <td>
                         {% if fiche['image_url'] %}
-                            <img src="{{ url_for('static', filename='uploads/' + fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" style="width: 100px;">
+                            <img src="{{ url_for('static', filename=fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" style="width: 100px;">
+                            <a>{{ fiche['matiere'] }}</a>
+                            <a>{{ fiche['niveau'] }}</a>
                         {% else %}
                             Pas d'image
                         {% endif %}
-                    </td>
-                </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-        <div class="text-center">
-            <a href="{{ url_for('home') }}" class="btn btn-primary">Retour à l'accueil</a>
         </div>
+        <form action="{{ url_for('home') }}" method="get">
+            <button type="submit" class="addbtn"> Retour à l'accueil </button>
+        </form>    
     </div>
 </body>
 </html>

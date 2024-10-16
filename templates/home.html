@@ -9,6 +9,9 @@
 <body>
     <h1>Bienvenue sur Auxilium !</h1>
     <input class = search id="recherche" type="search" placeholder="Rechercher une fiche"> 
+    <form action="{{ url_for('fiches') }}" method="get">
+        <button type="submit"> Explorer </button>
+    </form>    
     <form action="{{ url_for('addcard') }}" method="get">
         <button type="submit" class="addbtn"> + </button>
     </form>    
