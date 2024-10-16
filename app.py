@@ -163,6 +163,14 @@ def addcard():
 
     return render_template('addcard.html')
 
+@app.route('/fiches')
+def card():
+    """
+    Affiche les fiches dans une page
+    """
+    print('1')
+
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
