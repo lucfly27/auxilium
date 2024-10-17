@@ -185,4 +185,6 @@ def fiches():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    host_ip = '192.168.1.90' #for set an host ip
+    app.run(host=host_ip, port=5000, debug=True)
+
