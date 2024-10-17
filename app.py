@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
 
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db_connection():
@@ -141,13 +141,12 @@ def addcard():
         matiere = request.form['matiere']
         niveau = request.form['niveau']
         image = request.files['image']
-
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             conn=None
             try:
-                image.save(image_path) 
+                image.save("static/" + image_path) 
                 conn = get_db_connection()
                 cursor = conn.cursor()
 
@@ -157,7 +156,7 @@ def addcard():
                 flash('Fiche ajoutée avec succès!', 'success')
             except Exception as e:
                 print(f"Erreur: {str(e)}")
-                flash(f"Erreur: Fiche non ajoutée", 'error')
+                flash("Erreur: Fiche non ajoutée", 'error')
             finally:
                 if conn:
                     conn.close()

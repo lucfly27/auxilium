@@ -9,7 +9,9 @@
 <body>
     <h1> Bienvenue sur Auxilium </h1>
     <p class="text"> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
-    <button> Explorer </button>
+    <form action="{{ url_for('fiches') }}" method="get">
+        <button type="submit"> Explorer </button>
+    </form>   
     <button class="openbtn" id="openModalBtn" onclick="openModal()">
         <img src="{{ url_for('static', filename='user.png') }}" class="user" alt="Icon"> 
         Compte

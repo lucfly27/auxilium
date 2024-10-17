@@ -9,8 +9,19 @@
 <body>
     <h1>Ajouter une fiche</h1>
     <form method="post" enctype="multipart/form-data">
-        <input class="sign" type="text" name="matiere" placeholder="Matière" required>
-        <input class="sign" type="text" name="niveau" placeholder="Niveau" required>
+        <select id="select" name="matiere" required>
+            <option value="" selected>Matière</option>
+            <option value="Français">Français</option>
+            <option value="Maths">Maths</option>
+            <option value="Histoire">Histoire</option>
+            <option value="Géographie">Géographie</option>
+        </select>
+        <select id="select" name="niveau" required>
+            <option value="" selected>Niveau</option>
+            <option value="2nd">2nd</option>
+            <option value="1ère">1ère</option>
+            <option value="Tle">Tle</option>
+        </select>
         <input class="sign" type="file" name="image" accept="image/*" placeholder="Image" required>
         <div id="flash-messages">
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -28,4 +39,14 @@
     </form>
     <a class="text" href="{{ url_for('home') }}">Retour à l'accueil</a>
 </body>
+<script>
+    document.getElementById('select').addEventListener('change', function() {
+    var niveauOption = this.querySelector('option[value=""]');
+  
+    if (this.value !== "") {
+    niveauOption.disabled = true;
+    }
+    });
+
+</script>
 </html>

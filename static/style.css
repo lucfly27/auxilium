@@ -51,6 +51,19 @@ input {
     
 }
 
+select {
+    width: 500px;
+    height: 30px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: right;
+    align-items: right;
+    background-color: #fcafe9;
+    border-style: none;
+    margin-top: 5px;
+}
+
 .sign {
     width: 500px;
     height: 30px;
