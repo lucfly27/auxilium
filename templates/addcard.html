@@ -7,58 +7,73 @@
     <title>Auxilium</title>
 </head>
 <body>
-    <h1>Ajouter une fiche</h1>
-    <form method="post" enctype="multipart/form-data">
-        <select id="select" name="matiere" required>
-            <option value="" selected>Matière</option>
-            <option value="Français">Français</option>
-            <option value="Maths">Maths</option>
-            <option value="Histoire">Histoire</option>
-            <option value="Géographie">Géographie</option>
-            <option value="Enseignement Moral et Civique">Enseignement Moral et Civique</option>
-            <option value="Anglais">Anglais</option>
-            <option value="Espagnol">Espagnol</option>
-            <option value="Italien">Italien</option>
-            <option value="Allemand">Allemand</option>
-            <option value="Physique Chimie">Physique Chimie</option>
-            <option value="Sciences et Vie de la Terre">Sciences et Vie de la Terre</option>
-            <option value="Sciences Economiques et Sociales">Sciences Economiques et Sociales</option>
-            <option value="Sciences Numériques et Informatiques">Sciences Numériques et Informatiques</option>
-            <option value="Enseignement Scientifique Pc">Enseignement Scientifique PC</option>
-            <option value="Enseignement Scientifique Svt">Enseignement Scientifique Svt</option>
-            <option value="Sections Européennes Anglais">Sections Européennes Anglais</option>
-            <option value="Sections Européennes Dnl">Sections Européennes Dnl</option>
-            <option value="Arts Plastiques">Arts Plastiques</option>
-            <option value="Maths Spécialités">Maths Spécialités</option>
-            <option value="Physique Chimie Spécialités">Physique Chimie Spécialités</option>
-            <option value="Sciences et Vie de la Terre Spécialités">Sciences et Vie de la Terre Spécialités</option>
-            <option value="Numérique Sciences Informatiques">Numérique Sciences Informatiques</option>
-            <option value="Humanité Littérature et Philosophie">Humanité Littérature et Philosophie</option>
-            <option value="Histoire Géographie Géopolitique et Sciences Politiques">Histoire Géographie Géopolitique et Sciences Politiques</option>
-            <option value="Langues Littérature et Civilisations Etrangères">Langues Littérature et Civilisations Etrangères</option>
-        </select>
-        <select id="select" name="niveau" required>
-            <option value="" selected>Niveau</option>
-            <option value="2nd">2nd</option>
-            <option value="1ère">1ère</option>
-            <option value="Tle">Tle</option>
-        </select>
-        <input class="sign" type="file" name="image" accept="image/*" placeholder="Image" required>
-        <div id="flash-messages">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-messages flash-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+    <div class="center">
+        <form method="post" enctype="multipart/form-data">
+        <div class="element">
+            <h1>Ajouter une fiche</h1>
         </div>
-
-        <button type="submit">Ajouter la fiche</button>
-    </form>
-    <a class="text" href="{{ url_for('home') }}">Retour à l'accueil</a>
+        <div class="element">
+                <select id="select" name="matiere" required>
+                    <option value="" selected>Matière</option>
+                    <option value="Français">Français</option>
+                    <option value="Maths">Maths</option>
+                    <option value="Histoire">Histoire</option>
+                    <option value="Géographie">Géographie</option>
+                    <option value="Enseignement Moral et Civique">Enseignement Moral et Civique</option>
+                    <option value="Anglais">Anglais</option>
+                    <option value="Espagnol">Espagnol</option>
+                    <option value="Italien">Italien</option>
+                    <option value="Allemand">Allemand</option>
+                    <option value="Physique Chimie">Physique Chimie</option>
+                    <option value="Sciences et Vie de la Terre">Sciences et Vie de la Terre</option>
+                    <option value="Sciences Economiques et Sociales">Sciences Economiques et Sociales</option>
+                    <option value="Sciences Numériques et Informatiques">Sciences Numériques et Informatiques</option>
+                    <option value="Enseignement Scientifique Pc">Enseignement Scientifique PC</option>
+                    <option value="Enseignement Scientifique Svt">Enseignement Scientifique Svt</option>
+                    <option value="Sections Européennes Anglais">Sections Européennes Anglais</option>
+                    <option value="Sections Européennes Dnl">Sections Européennes Dnl</option>
+                    <option value="Arts Plastiques">Arts Plastiques</option>
+                    <option value="Maths Spécialités">Maths Spécialités</option>
+                    <option value="Physique Chimie Spécialités">Physique Chimie Spécialités</option>
+                    <option value="Sciences et Vie de la Terre Spécialités">Sciences et Vie de la Terre Spécialités</option>
+                    <option value="Numérique Sciences Informatiques">Numérique Sciences Informatiques</option>
+                    <option value="Humanité Littérature et Philosophie">Humanité Littérature et Philosophie</option>
+                    <option value="Histoire Géographie Géopolitique et Sciences Politiques">Histoire Géographie Géopolitique et Sciences Politiques</option>
+                    <option value="Langues Littérature et Civilisations Etrangères">Langues Littérature et Civilisations Etrangères</option>
+                </select>
+        </div>
+        <div class="element">
+                <select id="select" name="niveau" required>
+                    <option value="" selected>Niveau</option>
+                    <option value="2nd">2nd</option>
+                    <option value="1ère">1ère</option>
+                    <option value="Tle">Tle</option>
+                </select>
+        </div>
+        <div>
+                <input class="sign" type="file" name="image" accept="image/*" placeholder="Image" required>
+        </div>
+        <div class="element">
+                <div id="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="flash-messages flash-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+        </div>
+        <div class="element">
+                <button type="submit">Ajouter la fiche</button>
+        </div>
+            </form>
+        <div class="element">
+            <a class="text" href="{{ url_for('home') }}">Retour à l'accueil</a>
+        </div>
+    </div>
 </body>
 <script>
     document.getElementById('select').addEventListener('change', function() {

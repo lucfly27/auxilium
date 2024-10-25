@@ -7,15 +7,25 @@
     <title>Auxilium</title>
 </head>
 <body>
-    <h1> Bienvenue sur Auxilium </h1>
-    <p class="text"> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
-    <form action="{{ url_for('fiches') }}" method="get">
-        <button type="submit"> Explorer </button>
-    </form>   
+
     <button class="openbtn" id="openModalBtn" onclick="openModal()">
         <img src="{{ url_for('static', filename='user.png') }}" class="user" alt="Icon"> 
         Compte
-      </button>
+    </button>
+
+    <div class="center">
+        <div class="element">
+            <h1> Bienvenue sur Auxilium </h1>
+        </div>
+        <div class="element">
+            <p class="text"> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
+        </div>
+        <div class="element">
+            <form action="{{ url_for('fiches') }}" method="get">
+                <button type="submit"> Explorer </button>
+            </form>  
+        </div>
+    </div>
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
@@ -24,7 +34,6 @@
             <form method="POST" action="{{ url_for('login') }}">
                 <label for="username">Nom d'utilisateur</label>
                 <input type="text" name="username" required>
-                
                 <label for="password">Mot de passe</label>
                 <input type="password" name="password" required>
                 

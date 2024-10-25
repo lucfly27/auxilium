@@ -7,28 +7,37 @@
     <title>Auxilium</title>
 </head>
 <body>
-    <h1>Inscription</h1>
-    <p class="text">Créez un compte pour partager vos fiches de révisions.</p>
-    
-    <form method="POST" action="/inscription">
-        <input class="sign" type="text" name="username" placeholder="Nom d'utilisateur" required>
-        <input class="sign" type="email" name="email" placeholder="Adresse email" required>
-        <input class="sign" type="password" name="password" placeholder="Mot de passe" required>
-        <button type="submit">S'inscrire</button>
-    </form>
-
-    <div id="flash-messages" class="text">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-messages flash-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    <div class="center">
+        <div class="element">
+            <h1>Inscription</h1>
+        </div>
+        <div class="element">
+            <p class="text">Créez un compte pour partager vos fiches de révisions.</p>
+        </div>
+        <div class="element">
+            <form method="POST" action="/inscription">
+                <input class="sign" type="text" name="username" placeholder="Nom d'utilisateur" required>
+                <input class="sign" type="email" name="email" placeholder="Adresse email" required>
+                <input class="sign" type="password" name="password" placeholder="Mot de passe" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+        </div>
+        <div class="element">
+            <div id="flash-messages" class="text">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-messages flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="element">
+            <p class="text">Vous avez déjà un compte ? <a href="/?modal=True"> Connectez-vous ici</a></p>
+        </div>
     </div>
-
-    <p class="text">Vous avez déjà un compte ? <a href="/?modal=True"> Connectez-vous ici</a></p>
 </body>
 </html>
