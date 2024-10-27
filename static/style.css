@@ -244,16 +244,25 @@ input {
     font-size: 30px;
 }
 
-.card {
-    display: flex;
+.container_fiche {
+    display: block;
     margin-left: auto;
     margin-right: auto;
     justify-content: center;
     align-items: center;
     text-align: center;
+    width: 100vh;
+    height: 80vh;
+
 }
 
-.card a {
+.container_fiche a {
     font-size: 20px;
     margin-top: 10px; 
+}
+
+.fiche {
+    background-color: white;
+    width: 100px;
+    height: 120px;
 }

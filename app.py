@@ -154,6 +154,8 @@ def addcard():
                                (matiere, niveau, image_path))
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
+                username = session['username']
+                print(f"{username} vient d'ajouter une fiche ({matiere},{niveau})")
             except Exception as e:
                 print(f"Erreur: {str(e)}")
                 flash("Erreur: Fiche non ajoutée", 'error')
@@ -182,6 +184,26 @@ def fiches():
 
     return render_template('fiches.html', fiches=fiches)
 
+@app.route('/fiches/<int:fiche_id>')
+def fiche_detail(fiche_id):
+    """
+    Affiche les détails d'une fiche spécifique en fonction de son ID
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM fiche WHERE id = ?', (fiche_id,))
+    fiche = cursor.fetchone()
+    conn.close()
+
+    if fiche is None:
+        flash("Fiche non trouvée", 'error')
+        return redirect(url_for('fiches'))
+
+    return render_template('fiche.html', fiche=fiche) 
 
 if __name__ == '__main__':
     init_db()

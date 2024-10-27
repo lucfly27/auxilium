@@ -26,11 +26,14 @@
     <button class="openbtn" onclick="openMenu()">
         <img class="user" src="{{ url_for('static', filename='user.png') }}" alt="Icon"> 
         {{ username }}
-      </button>
+    </button>
       
     <div id="menuDeroulant" class="menu-deroulant">
         <img src="{{ url_for('static', filename='user.png')}}" class="usermd" alt ="Icon">
         <img src="{{ url_for('static', filename='close.png')}}" class="closebtn" onclick="closeMenu()" alt="Close" style="cursor: pointer;">
+        <a>Vos Infos</a>
+        <a>Contact</a>
+        <a>Credits</a>
         <a href="{{ url_for('logout') }}">Deconnexion</a>
     </div>
 
