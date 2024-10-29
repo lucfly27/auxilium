@@ -205,6 +205,33 @@ def fiche_detail(fiche_id):
 
     return render_template('fiche.html', fiche=fiche) 
 
+@app.route('/fiches/<string:matiere>')
+def fiche_tri_matiere(matiere):
+    """
+    Affiche les fiches d'une certaine matière.
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    
+    matiere = matiere[0].upper() + matiere[1:]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT 1 FROM fiche WHERE matiere = ? LIMIT 1', (matiere,))
+    matiere_exist = cursor.fetchone()
+
+    if not matiere_exist:
+        flash('Matière non trouvée', 'error')
+        conn.close()
+        return redirect(url_for('fiches'))  
+
+    cursor.execute('SELECT * FROM fiche WHERE matiere = ?', (matiere,))
+    fiches = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('fiches.html', fiches=fiches)
+
 if __name__ == '__main__':
     init_db()
     host_ip = '' #for set an host ip

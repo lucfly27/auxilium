@@ -12,8 +12,7 @@
             {% for fiche in fiches %}
                     {% if fiche['image_url'] %}
                         <img src="{{ url_for('static', filename=fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
-                        <a>{{ fiche['matiere'] }}</a>
-                        <a>{{ fiche['niveau'] }}</a>
+                        <a>{{ fiche['matiere'] }}, {{ fiche['niveau'] }}</a>
                     {% else %}
                         Pas d'image
                     {% endif %}
