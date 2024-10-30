@@ -7,20 +7,28 @@
     <title>Auxilium</title>
 </head>
 <body>
-    <h1 class="text-center">Liste des Fiches</h1>
-    <div class="container_fiche">
-            {% for fiche in fiches %}
-                    {% if fiche['image_url'] %}
-                        <img src="{{ url_for('static', filename=fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
-                        <a>{{ fiche['matiere'] }}, {{ fiche['niveau'] }}</a>
-                    {% else %}
-                        Pas d'image
-                    {% endif %}
-            {% endfor %}
+    <div class="center">
+        <div class="element">
+            <h1>Liste des Fiches</h1>
+        </div>
+        <div class="element">
+            <div class="container_fiche">
+                    {% for fiche in fiches %}
+                            {% if fiche['image_url'] %}
+                                <img src="{{ url_for('static', filename=fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
+                                <a>{{ fiche['matiere'] }}, {{ fiche['niveau'] }}</a>
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                    {% endfor %}
+            </div>
+        </div>
+        <div class="element">
+            <form action="{{ url_for('home') }}" method="get">
+                <button type="submit" class="fixbtn"> Retour à l'accueil </button>
+            </form>   
+        </div>
     </div>
-    <form action="{{ url_for('home') }}" method="get">
-        <button type="submit" class="addbtn"> Retour à l'accueil </button>
-    </form>   
     
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
