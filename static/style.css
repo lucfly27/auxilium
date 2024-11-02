@@ -53,6 +53,35 @@
         width: 280px;
         border-radius: 10px;
     }
+
+    .container_fiche {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        width: 50vh;
+        height: 30vh;
+    }
+
+    .fiche {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        border : 5px solid #fcafe9;
+    }
+
+    .fixbtn {
+        position: fixed;
+        bottom: 2%; 
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        font-size: 15px;
+        border-radius: 4px;
+    }
 }
 
 /* pour ecran ordi/tablette */
@@ -92,11 +121,40 @@
 
     .modal-content {
         background-color: white;
-        margin: 15% auto;
+        margin: 10% auto;
         padding: 20px;
         border: 1px solid #888;
         width: 300px;
         border-radius: 10px;
+    }
+
+    .container_fiche {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        width: 100vh;
+        height: 80vh;
+    }
+
+    .fiche {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 25%;
+        border : 5px solid #fcafe9;
+    }
+
+    .fixbtn {
+        position: fixed;
+        bottom: 2%; 
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
     }
 }
 
@@ -219,17 +277,6 @@ input {
     margin-bottom: 80px;
 }
 
-.fixbtn {
-    position: fixed;
-    bottom: 2%; 
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 8px;
-}
-
-
 .user {
     width:30px; 
     height:30px;
@@ -255,27 +302,8 @@ input {
     font-size: 30px;
 }
 
-.container_fiche {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    width: 100vh;
-    height: 80vh;
-
-}
-
 .container_fiche a {
     font-size: 20px;
     margin-top: 10px; 
 }
 
-.fiche {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 25%;
-    border : 5px solid #fcafe9;
-}
