@@ -22,6 +22,17 @@ def get_db_connection():
 def accueil():
     return render_template('accueil.html')
 
+def test_db():
+    """
+    Test si la db à était instancier
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT * FROM niveau WHERE id_niveau = 1')
+
+
+
 def init_db():
     """
     Crée la base de données et les tables si elles n'existent pas.
@@ -30,8 +41,18 @@ def init_db():
     cursor = conn.cursor()
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS fiche (
+            id_fiche INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_utilisateur INT UNIQUE NOT NULL,
+            id_niveau INT UNIQUE NOT NULL,
+            id_matiere INT UNIQUE NOT NULL,
+            img_url TEXT UNIQUE NOT NULL
+        );
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS utilisateurs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
@@ -39,13 +60,23 @@ def init_db():
     ''')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS fiche (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            matiere TEXT NOT NULL,
-            niveau TEXT NOT NULL,
-            image_url TEXT NOT NULL
+        CREATE TABLE IF NOT EXISTS niveau (
+            id_niveau INTEGER PRIMARY KEY AUTOINCREMENT,
+            abreviation TEXT NOT NULL,
+            nom TEXT NOT NULL
         );
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS matiere (
+            id_matiere INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_niveau INT NOT NULL,
+            abreviation TEXT NOT NULL,
+            nom TEXT NOT NULL
+        );
+    ''')
+
+    test_db()
 
     conn.commit()  
     conn.close()
