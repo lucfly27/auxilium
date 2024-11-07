@@ -145,7 +145,7 @@ def inscription():
                            (username, email, password))
             conn.commit()  
             print(f'Compte créé avec succès pour {username}!')
-            return redirect(url_for('accueil'))
+            return redirect(url_for('home'))
         except sqlite3.IntegrityError:
             flash('Cet utilisateur ou cet email existe déjà', 'error')
         finally:
