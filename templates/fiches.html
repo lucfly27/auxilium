@@ -12,9 +12,11 @@
         <div class="element">
             <div class="container_fiche">
                     {% for fiche in fiches %}
-                            {% if fiche['image_url'] %}
-                                <img src="{{ url_for('static', filename=fiche['image_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
-                                <a>{{ fiche['matiere'] }}, {{ fiche['niveau'] }}</a>
+                            {% if fiche['img_url'] %}
+                                <a href="/fiches/{{ fiche['id_fiche'] }}">
+                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
+                                </a>                            
+                                <a>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
                             {% else %}
                                 Pas d'image
                             {% endif %}

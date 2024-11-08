@@ -33,9 +33,9 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS fiche (
             id_fiche INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_utilisateur INT UNIQUE NOT NULL,
-            id_niveau INT UNIQUE NOT NULL,
-            id_matiere INT UNIQUE NOT NULL,
+            id_utilisateur INT NOT NULL,
+            id_niveau INT NOT NULL,
+            id_matiere INT NOT NULL,
             img_url TEXT UNIQUE NOT NULL
         );
     ''')
@@ -237,6 +237,7 @@ def addcard():
         return redirect(url_for('login', modal=True))
 
     if request.method == 'POST':
+        username = session['username']
         matiere = request.form['matiere']
         niveau = request.form['niveau']
         image = request.files['image']
@@ -249,9 +250,12 @@ def addcard():
                 image.save("static/" + image_path) 
                 conn = get_db_connection()
                 cursor = conn.cursor()
+                cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
+                id_user = cursor.fetchone()
+                id_user = id_user['id_utilisateur']
                 cursor.execute(
-                    'INSERT INTO fiche (id_matiere, id_niveau, img_url) VALUES (?, ?, ?)', 
-                    (matiere, niveau, image_path)
+                    'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url) VALUES (?, ?, ?, ?)', 
+                    (id_user, matiere, niveau, image_path)
                 )
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
@@ -285,15 +289,18 @@ def fiches():
     
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM fiche')
+    cursor.execute('''
+        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
+        JOIN matiere on matiere.id_matiere = fiche.id_matiere
+        JOIN niveau on niveau.id_niveau = fiche.id_niveau;
+    ''')
     fiches = cursor.fetchall() 
-
     conn.close()
 
     return render_template('fiches.html', fiches=fiches)
 
-@app.route('/fiches/<int:fiche_id>')
-def fiche_detail(fiche_id):
+@app.route('/fiches/<int:id_fiche>')
+def fiche_detail(id_fiche):
     """
     Affiche les détails d'une fiche spécifique en fonction de son ID
     """
@@ -303,7 +310,12 @@ def fiche_detail(fiche_id):
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM fiche WHERE id = ?', (fiche_id,))
+    cursor.execute('''
+        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
+        JOIN matiere on matiere.id_matiere = fiche.id_matiere
+        JOIN niveau on niveau.id_niveau = fiche.id_niveau
+        WHERE id_fiche = ?
+    ''', (id_fiche,))
     fiche = cursor.fetchone()
     conn.close()
 
