@@ -22,16 +22,6 @@ def get_db_connection():
 def accueil():
     return render_template('accueil.html')
 
-def test_db():
-    """
-    Test si la db à était instancier
-    """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    cursor.execute('SELECT * FROM niveau WHERE id_niveau = 1')
-
-
 
 def init_db():
     """
@@ -76,7 +66,77 @@ def init_db():
         );
     ''')
 
-    test_db()
+    cursor.execute('SELECT COUNT(*) FROM niveau WHERE abreviation = ? AND nom = ?', ('2nd', 'seconde'))
+    exist = cursor.fetchone()[0]
+
+    if not exist:
+        cursor.execute('INSERT INTO niveau (abreviation, nom) VALUES (?, ?)', ('2nd', 'seconde'))
+        cursor.execute('INSERT INTO niveau (abreviation, nom) VALUES (?, ?)', ('1ere', 'premiere'))
+        cursor.execute('INSERT INTO niveau (abreviation, nom) VALUES (?, ?)', ('Tle', 'terminale'))
+
+    matieres = [
+        ('1', 'Fr', 'Français'),
+        ('2', 'Fr', 'Français'),
+        ('1', 'Ma', 'Maths'),
+        ('1', 'HG', 'Histoire Géographie'),
+        ('2', 'HG', 'Histoire Géographie'),
+        ('3', 'HG', 'Histoire Géographie'),
+        ('1', 'EMC', 'Enseignement Moral et Civique'),
+        ('2', 'EMC', 'Enseignement Moral et Civique'),
+        ('3', 'EMC', 'Enseignement Moral et Civique'),
+        ('1', 'En', 'Anglais'),
+        ('2', 'En', 'Anglais'),
+        ('3', 'En', 'Anglais'),
+        ('1', 'Es', 'Espagnol'),
+        ('2', 'Es', 'Espagnol'),
+        ('3', 'Es', 'Espagnol'),
+        ('1', 'It', 'Italien'),
+        ('2', 'It', 'Italien'),
+        ('3', 'It', 'Italien'),
+        ('1', 'All', 'Allemand'),
+        ('2', 'All', 'Allemand'),
+        ('3', 'All', 'Allemand'),
+        ('1', 'PC', 'Physique Chimie'),
+        ('1', 'SVT', 'Sciences et Vie de la Terre'),
+        ('1', 'SNI', 'Sciences Numériques et Informatiques'),
+        ('2', 'ES', 'Enseignement Scientifique'),
+        ('3', 'ES', 'Enseignement Scientifique'),
+        ('1', 'EURO', 'Sections Européennes Anglais'),
+        ('2', 'EURO', 'Sections Européennes Anglais'),
+        ('3', 'EURO', 'Sections Européennes Anglais'),
+        ('1', 'DNL', 'Sections Européennes DNL'),
+        ('2', 'DNL', 'Sections Européennes DNL'),
+        ('3', 'DNL', 'Sections Européennes DNL'),
+        ('1', 'SES', 'Sciences Economiques et Sociales'),
+        ('2', 'SES', 'Sciences Economiques et Sociales'),
+        ('3', 'SES', 'Sciences Economiques et Sociales'),
+        ('1', 'AP', 'Arts Plastiques'),
+        ('2', 'AP', 'Arts Plastiques'),
+        ('3', 'AP', 'Arts Plastiques'),
+        ('2', 'SM', 'Spécialités Maths'),
+        ('3', 'SM', 'Spécialités Maths'),
+        ('2', 'SPC', 'Spécialités Physique Chimie'),
+        ('3', 'SPC', 'Spécialités Physique Chimie'),
+        ('2', 'SSVT', 'Spécialités Sciences et Vie de la Terre'),
+        ('3', 'SSVT', 'Spécialités Sciences et Vie de la Terre'),
+        ('2', 'NSI', 'Numérique Sciences Informatiques'),
+        ('3', 'NSI', 'Numérique Sciences Informatiques'),
+        ('2', 'HLP', 'Humanité Littérature et Philosophie'),
+        ('3', 'HLP', 'Humanité Littérature et Philosophie'),
+        ('2', 'HGGSP', 'Histoire Géographie Géopolitique et Sciences Politiques'),
+        ('3', 'HGGSP', 'Histoire Géographie Géopolitique et Sciences Politiques'),
+        ('2', 'LLCE', 'Langues Littérature et Civilisations Etrangères'),
+        ('3', 'LLCE', 'Langues Littérature et Civilisations Etrangères')
+    ]
+
+    for niveau, abreviation, nom in matieres:
+        cursor.execute('SELECT COUNT(*) FROM matiere WHERE id_niveau = ? AND abreviation = ? AND nom = ?', (niveau, abreviation, nom))
+        exist = cursor.fetchone()[0]
+
+        if not exist:
+            cursor.execute('INSERT INTO matiere (id_niveau, abreviation, nom) VALUES (?, ?, ?)', (niveau, abreviation, nom))
+
+
 
     conn.commit()  
     conn.close()
