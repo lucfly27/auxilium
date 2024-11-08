@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Auxilium</title>
 </head>
 <body>
-
-    <h1>{{ fiche['matiere'] }}</h1>
-    <p>Niveau: {{ fiche['niveau'] }}</p>
-    <img src="{{ url_for('static', filename=fiche['image_url']) }}">
+    <div class="center">
+        <div class="element">
+            <h1>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</h1>
+        </div>
+        <div class="element">
+            <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiche">
+        </div> 
+        <div class="element">
+            <form action="{{ url_for('fiches') }}" method="get">
+                <button type="submit" class="fixbtn"> Retour aux fiches</button>
+            </form>   
+        </div>
+    </div>
 </body>
 </html>

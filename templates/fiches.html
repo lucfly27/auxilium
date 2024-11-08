@@ -14,7 +14,7 @@
                     {% for fiche in fiches %}
                             {% if fiche['img_url'] %}
                                 <a href="/fiches/{{ fiche['id_fiche'] }}">
-                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiche">
+                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
                                 </a>                            
                                 <a>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
                             {% else %}

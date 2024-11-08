@@ -65,11 +65,19 @@
         height: 30vh;
     }
 
-    .fiche {
+    .fiches {
         display: block;
         margin-left: auto;
         margin-right: auto;
         width: 50%;
+        border : 5px solid #fcafe9;
+    }
+
+    .fiche {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 95%;
         border : 5px solid #fcafe9;
     }
 
@@ -137,6 +145,14 @@
         text-align: center;
         width: 100vh;
         height: 80vh;
+    }
+
+    .fiches {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 25%;
+        border : 5px solid #fcafe9; 
     }
 
     .fiche {
