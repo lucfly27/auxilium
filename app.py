@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -136,8 +136,6 @@ def init_db():
         if not exist:
             cursor.execute('INSERT INTO matiere (id_niveau, abreviation, nom) VALUES (?, ?, ?)', (niveau, abreviation, nom))
 
-
-
     conn.commit()  
     conn.close()
 
@@ -213,6 +211,16 @@ def inscription():
 
     return render_template('inscription.html')
 
+@app.route('/get-matieres')
+def get_matieres():
+    niveau_id = request.args.get('niveau_id')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_matiere, nom FROM matiere WHERE id_niveau = ?', (niveau_id,))
+    matieres = cursor.fetchall()
+    conn.close()
+    return jsonify({'matieres': [{'id_matiere': matiere['id_matiere'], 'nom': matiere['nom']} for matiere in matieres]})
+
 def allowed_file(filename):
     """
     Vérifie si le fichier ne contient rien d'offensant
@@ -222,7 +230,7 @@ def allowed_file(filename):
 @app.route('/addcard', methods=['GET', 'POST'])
 def addcard():
     """
-    Ajoute une fiche au site en selectionant une matiere, un niveau, une image
+    Ajoute une fiche au site en sélectionnant une matière, un niveau, une image.
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
@@ -235,18 +243,20 @@ def addcard():
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            conn=None
+            
+            conn = None
             try:
                 image.save("static/" + image_path) 
                 conn = get_db_connection()
                 cursor = conn.cursor()
-
-                cursor.execute('INSERT INTO fiche (matiere, niveau, image_url) VALUES (?, ?, ?)', 
-                               (matiere, niveau, image_path))
+                cursor.execute(
+                    'INSERT INTO fiche (id_matiere, id_niveau, img_url) VALUES (?, ?, ?)', 
+                    (matiere, niveau, image_path)
+                )
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
                 username = session['username']
-                print(f"{username} vient d'ajouter une fiche ({matiere},{niveau})")
+                print(f"{username} vient d'ajouter une fiche (Matière: {matiere}, Niveau: {niveau})")
             except Exception as e:
                 print(f"Erreur: {str(e)}")
                 flash("Erreur: Fiche non ajoutée", 'error')
@@ -255,7 +265,14 @@ def addcard():
                     conn.close()
         else:
             flash('Type de fichier non autorisé', 'error')
-    return render_template('addcard.html')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_niveau, abreviation FROM niveau')
+    niveaux = cursor.fetchall()
+    conn.close()
+    return render_template('addcard.html', niveaux=niveaux)
+
 
 @app.route('/fiches')
 def fiches():
