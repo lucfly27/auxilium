@@ -297,7 +297,7 @@ def checkfiche():
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
     elif not session['username'] == 'admin':
-        flash("Vous n'avez pas acces à ceci", 'error')
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     
     conn = get_db_connection()
@@ -322,7 +322,7 @@ def accepterfiche(id_fiche):
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
     elif not session['username'] == 'admin':
-        flash("Vous n'avez pas acces à ceci", 'error')
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     else:
         conn = get_db_connection()
