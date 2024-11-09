@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Auxilium</title>
+</head>
+<body>
+    <div class="center">
+        <h1>Fiches à check:</h1>  
+        <div class="element">
+            <div class="container_fiche">
+                    {% for fiche in fiches %}
+                            {% if fiche['img_url'] %}
+                                <a>
+                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
+                                </a>                            
+                                <a>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
+                                <a href="accepterfiche/{{ fiche['id_fiche'] }}">
+                                    <button type="submit" class="button" style="background-color:green">Accepter fiche</button>
+                                </a>   
+                                <a href="supprimerfiche/{{ fiche['id_fiche'] }}">
+                                    <button type="submit" class="button" style="background-color:red">Refuser fiche</button>
+                                </a>  
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                    {% endfor %}
+            </div>
+        </div>
+        <div class="element">
+            <form action="{{ url_for('home') }}" method="get">
+                <button type="submit" class="fixbtn"> Retour à l'accueil </button>
+            </form>   
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+</body>
+</html>

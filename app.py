@@ -30,13 +30,16 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
+
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS fiche (
             id_fiche INTEGER PRIMARY KEY AUTOINCREMENT,
             id_utilisateur INT NOT NULL,
             id_niveau INT NOT NULL,
             id_matiere INT NOT NULL,
-            img_url TEXT UNIQUE NOT NULL
+            img_url TEXT UNIQUE NOT NULL,
+            img_check INTEGER NOT NULL 
         );
     ''')
 
@@ -65,6 +68,14 @@ def init_db():
             nom TEXT NOT NULL
         );
     ''')
+
+    cursor.execute('SELECT COUNT(*) FROM utilisateurs WHERE id_utilisateur = ? AND username = ?', ('1', 'admin'))
+    exist = cursor.fetchone()[0]
+
+    if not exist:
+        admin_password = 'scrypt:32768:8:1$hok6AfH4DTJQWwAm$4c4b7cbd977b84a9ce09489fde5c7249c92a7736c1c8e8b5bbefc1c157ba1c407f50c81d484965b68659da75773cc418f3d454f73bb2af67328e09c20c25daa9'
+        cursor.execute('INSERT INTO utilisateurs (username, email, password) VALUES (?, ?, ?)', ('admin', 'luccas3684@gmail.com', admin_password))
+
 
     cursor.execute('SELECT COUNT(*) FROM niveau WHERE abreviation = ? AND nom = ?', ('2nd', 'seconde'))
     exist = cursor.fetchone()[0]
@@ -254,13 +265,13 @@ def addcard():
                 id_user = cursor.fetchone()
                 id_user = id_user['id_utilisateur']
                 cursor.execute(
-                    'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url) VALUES (?, ?, ?, ?)', 
-                    (id_user, matiere, niveau, image_path)
+                    'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url, img_check) VALUES (?, ?, ?, ?, ?)', 
+                    (id_user, matiere, niveau, image_path, '0')
                 )
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
                 username = session['username']
-                print(f"{username} vient d'ajouter une fiche (Matière: {matiere}, Niveau: {niveau})")
+                print(f"{username} vient de demander à ajouter une fiche (Matière: {matiere}, Niveau: {niveau})")
             except Exception as e:
                 print(f"Erreur: {str(e)}")
                 flash("Erreur: Fiche non ajoutée", 'error')
@@ -277,6 +288,88 @@ def addcard():
     conn.close()
     return render_template('addcard.html', niveaux=niveaux)
 
+@app.route('/checkfiche')
+def checkfiche():
+    """
+    Affiche les fiches pas encore traiter
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not session['username'] == 'admin':
+        flash("Vous n'avez pas acces à ceci", 'error')
+        return redirect(url_for('fiches'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
+        JOIN matiere on matiere.id_matiere = fiche.id_matiere
+        JOIN niveau on niveau.id_niveau = fiche.id_niveau
+        WHERE fiche.img_check = 0;
+    ''')
+    fiches = cursor.fetchall() 
+    conn.close()
+
+    return render_template('checkfiches.html', fiches=fiches)
+
+@app.route('/accepterfiche/<int:id_fiche>')
+def accepterfiche(id_fiche):
+    """
+    Accepte la publication d'une fiche avec son id
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not session['username'] == 'admin':
+        flash("Vous n'avez pas acces à ceci", 'error')
+        return redirect(url_for('fiches'))
+    else:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE fiche
+            SET img_check = 1
+            WHERE id_fiche = ?
+        ''', (id_fiche,))
+
+        conn.commit()
+        fiches = cursor.fetchall() 
+        conn.close()
+
+        return redirect(url_for('checkfiche'))
+
+@app.route('/supprimerfiche/<int:id_fiche>')
+def supprimerfiche(id_fiche):
+    """
+    Supprime une fiche avec son id et remet a jour tout les id
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not session['username'] == 'admin':
+        return redirect(url_for('fiches'))
+    else:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM fiche WHERE id_fiche = ?', (id_fiche,))
+        conn.commit()
+
+        cursor.execute('''
+            UPDATE fiche
+            SET id_fiche = id_fiche - 1
+            WHERE id_fiche > ?;
+        ''', (id_fiche,))
+        conn.commit()
+
+        # Reintialiser l'auto incrementation de la table fiche
+        cursor.execute('''DELETE FROM sqlite_sequence WHERE name='fiche';''')
+        conn.commit()
+
+        fiches = cursor.fetchall() 
+        conn.close()
+
+        return redirect(url_for('checkfiche'))
 
 @app.route('/fiches')
 def fiches():
@@ -292,7 +385,8 @@ def fiches():
     cursor.execute('''
         SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
         JOIN matiere on matiere.id_matiere = fiche.id_matiere
-        JOIN niveau on niveau.id_niveau = fiche.id_niveau;
+        JOIN niveau on niveau.id_niveau = fiche.id_niveau
+        WHERE fiche.img_check = 1;
     ''')
     fiches = cursor.fetchall() 
     conn.close()
@@ -314,7 +408,7 @@ def fiche_detail(id_fiche):
         SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
         JOIN matiere on matiere.id_matiere = fiche.id_matiere
         JOIN niveau on niveau.id_niveau = fiche.id_niveau
-        WHERE id_fiche = ?
+        WHERE img_check = 1 AND id_fiche = ?
     ''', (id_fiche,))
     fiche = cursor.fetchone()
     conn.close()
