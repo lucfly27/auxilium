@@ -323,3 +323,13 @@ input {
     margin-top: 10px; 
 }
 
+.cardbanner {
+    background-image: url("");
+    position: absolute;
+    width: 100%;
+    height: 360px;
+    left: 0;
+    top: calc(100% + 830px);
+    z-index: -5;
+    animation: scroll-right 30s steps(600) infinite;
+}
