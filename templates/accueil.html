@@ -28,7 +28,7 @@
         <div class="cardbanner"></div>
     </div>
 
-    <div id="loginModal" class="modal">
+    <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Connexion</h2>
@@ -49,7 +49,7 @@
                     {% endif %}
                 {% endwith %}
             </div>
-                <p>Vous n'avez pas de compte ? <a href="/inscription">Inscrivez-vous ici</a></p>
+                <p>Vous n'avez pas de compte ? <a href="/inscription" class="signin">Inscrivez-vous ici</a></p>
                 <button type="submit">Se connecter</button>
             </form>
         </div>
@@ -57,15 +57,15 @@
 
     <script>
         function openModal() {
-            document.getElementById('loginModal').style.display = 'block';
+            document.getElementById('modal').style.display = 'block';
         }
 
         function closeModal() {
-            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
         }
 
         window.onclick = function(event) {
-            var modal = document.getElementById('loginModal');
+            var modal = document.getElementById('modal');
             if (event.target == modal) {
                 closeModal();
             }

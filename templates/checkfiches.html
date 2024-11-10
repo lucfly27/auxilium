@@ -18,10 +18,10 @@
                                 </a>                            
                                 <a>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
                                 <a href="accepterfiche/{{ fiche['id_fiche'] }}">
-                                    <button type="submit" class="button" style="background-color:green">Accepter fiche</button>
+                                    <button type="submit" class="button" style="background-color:green; text-decoration: none;">Accepter fiche</button>
                                 </a>   
                                 <a href="supprimerfiche/{{ fiche['id_fiche'] }}">
-                                    <button type="submit" class="button" style="background-color:red">Refuser fiche</button>
+                                    <button type="submit" class="button" style="background-color:red; text-decoration: none;">Refuser fiche</button>
                                 </a>  
                             {% else %}
                                 Pas d'image

@@ -13,6 +13,25 @@
         </div>
         <div class="element">
             <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiche">
+            <a href="{{ url_for('static', filename=fiche['img_url']) }}" download="fiche_Auxilium.png" style="text-decoration: none; color: inherit;">
+                <button>Télécharger</button>
+            </a>            
+            <button id="openModalBtn" onclick="openModal()">
+                Signaler
+            </button>
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Signaler</h2>
+                    <form method="POST" action="">
+                        <label for="objet">Objet</label>
+                        <input type="text" name="objet" required>
+                        <label for="precision">Précision</label>
+                        <input type="text" name="precision" required>
+                    </form>
+                    <button type="submit">Envoyer</button>
+                </div>
+            </div>
         </div> 
         <div class="element">
             <form action="{{ url_for('fiches') }}" method="get">
@@ -21,4 +40,27 @@
         </div>
     </div>
 </body>
+<script>
+    function openModal() {
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById('modal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('modal')) {
+        openModal();  
+    }
+
+    document.querySelector('.close').addEventListener('click', closeModal);
+</script>
 </html>

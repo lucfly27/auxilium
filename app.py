@@ -253,14 +253,19 @@ def addcard():
         niveau = request.form['niveau']
         image = request.files['image']
         if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT abreviation FROM matiere WHERE id_matiere = ?", (matiere,))
+            nom_matiere = cursor.fetchone()
+            nom_matiere = nom_matiere['abreviation']
+            cursor.execute("SELECT abreviation FROM niveau WHERE id_niveau = ?", (niveau,))
+            nom_niveau = cursor.fetchone()
+            nom_niveau = nom_niveau['abreviation']
+            filename = f"fiche_auxilium_{nom_matiere}_{nom_niveau}"
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
-            conn = None
             try:
                 image.save("static/" + image_path) 
-                conn = get_db_connection()
-                cursor = conn.cursor()
                 cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
                 id_user = cursor.fetchone()
                 id_user = id_user['id_utilisateur']
