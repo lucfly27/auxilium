@@ -174,7 +174,7 @@ def login():
             return redirect(url_for('accueil', modal=True))
         conn.close()
     
-    return render_template('accueil.html')
+    return redirect(url_for('accueil', modal=True))
 
 @app.route('/home')
 def home():
