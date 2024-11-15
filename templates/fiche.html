@@ -23,13 +23,13 @@
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <h2>Signaler</h2>
-                    <form method="POST" action="">
-                        <label for="objet">Objet</label>
-                        <input type="text" name="objet" required>
-                        <label for="precision">Précision</label>
-                        <input type="text" name="precision" required>
+                    <form method="POST" action="{{ url_for('signaler') }}">
+                        <label for="object">Objet</label>
+                        <input type="text" name="object" required>
+                        <label for="content">Contenu</label>
+                        <input class="objet" type="text" name="content" required>
+                        <button type="submit">Signaler</button>
                     </form>
-                    <button type="submit">Envoyer</button>
                 </div>
             </div>
         </div> 

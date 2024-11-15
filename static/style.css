@@ -337,3 +337,8 @@ input {
 .signin a {
     text-decoration:underline;
 }
+
+.objet {
+    width: auto;
+    height: 100px;
+}

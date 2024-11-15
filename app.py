@@ -451,6 +451,16 @@ def fiche_tri_matiere(matiere):
 
     return render_template('fiches.html', fiches=fiches)
 
+@app.route('/signaler', methods=['GET', 'POST'])
+def signaler():
+    """
+    Envoi un mail à l'adresse mail selectionner pour le signalement d'une fiche
+    """
+    if request.method == 'POST':
+        objet = request.form['object']
+        contenu = request.form['content']
+        
+
 if __name__ == '__main__':
     init_db()
     host_ip = '' #for set an host ip
