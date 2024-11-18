@@ -3,9 +3,19 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
+
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='auxilium84840@gmail.com',
+    MAIL_PASSWORD=os.getenv(PASSWORD)
+)
+mail = Mail(app)
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -457,9 +467,19 @@ def signaler():
     Envoi un mail à l'adresse mail selectionner pour le signalement d'une fiche
     """
     if request.method == 'POST':
-        objet = request.form['object']
-        contenu = request.form['content']
+        subject = request.form['object']
+        content = request.form['content']
         
+        msg = Message(
+            subject=subject,
+            sender='auxilium84840@gmail.com',
+            recipients=['luccas3684@gmail.com'],
+            body=content
+        )
+        mail.send(msg)
+
+    return render_template('fiches.html', fiches=fiches)
+
 
 if __name__ == '__main__':
     init_db()
