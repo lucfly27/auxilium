@@ -3,19 +3,9 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
-
-app.config.update(
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USERNAME='auxilium@gmx.fr',
-    MAIL_PASSWORD=os.getenv(PASSWORD)
-)
-mail = Mail(app)
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -76,6 +66,15 @@ def init_db():
             id_niveau INT NOT NULL,
             abreviation TEXT NOT NULL,
             nom TEXT NOT NULL
+        );
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS signalement (
+            id_signalement INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_utilisateur INT NOT NULL,
+            id_fiche INT NOT NULL,
+            message TEXT NOT NULL  
         );
     ''')
 
@@ -464,22 +463,9 @@ def fiche_tri_matiere(matiere):
 @app.route('/signaler', methods=['GET', 'POST'])
 def signaler():
     """
-    Envoi un mail à l'adresse mail selectionner pour le signalement d'une fiche
+    Signaler une fiche ce qui l'envoie dans la page fiche signaler.
     """
-    if request.method == 'POST':
-        subject = request.form['object']
-        content = request.form['content']
-        
-        msg = Message(
-            subject=subject,
-            sender='auxilium@gmx.fr',
-            recipients=['luccas3684@gmail.com'],
-            body=content
-        )
-        mail.send(msg)
-
-    return render_template('fiches.html', fiches=fiches)
-
+    
 
 if __name__ == '__main__':
     init_db()

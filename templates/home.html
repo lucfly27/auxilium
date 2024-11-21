@@ -35,6 +35,7 @@
         <a>Credits</a>
         {% if username == 'admin' %}
             <a href="{{ url_for('checkfiche') }}"">Demande ajout fiche</a>
+            <a href="">Signalement fiche</a>
         {% endif %}
         <a href="{{ url_for('logout') }}">Deconnexion</a>
     </div>
