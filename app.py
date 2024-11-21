@@ -12,7 +12,7 @@ app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME='auxilium84840@gmail.com',
+    MAIL_USERNAME='auxilium@gmx.fr',
     MAIL_PASSWORD=os.getenv(PASSWORD)
 )
 mail = Mail(app)
@@ -472,7 +472,7 @@ def signaler():
         
         msg = Message(
             subject=subject,
-            sender='auxilium84840@gmail.com',
+            sender='auxilium@gmx.fr',
             recipients=['luccas3684@gmail.com'],
             body=content
         )
