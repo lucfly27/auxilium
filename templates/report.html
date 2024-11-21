@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Auxilium</title>
+</head>
+<body>
+    <div class="center">
+        <h1>Fiches signalées :</h1>  
+        <div class="element">
+            {% if signalements %}
+                {% for signalement in signalements %}
+                    <div class="signalements">
+                        <a>
+                            <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="Fiche {{ signalement['id_fiche'] }}" class="fiches">
+                        </a>                            
+                        <p>Fiche signalée par {{ signalement['username'] }} :</p>
+                        <p>Message : {{ signalement['message'] }}</p>
+                        <a href="{{ url_for('supprimerfiche', id_fiche=signalement['id_fiche']) }}">
+                            <button type="button" class="button">🗑️ Supprimer</button>
+                        </a>  
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text">Pas de signalements, tout va bien !</p>
+            {% endif %}
+        </div>
+        <div class="element">
+            <form action="{{ url_for('home') }}" method="get">
+                <button type="submit" class="fixbtn">Retour à l'accueil</button>
+            </form>   
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <script>
+                    alert("{{ message }}");
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

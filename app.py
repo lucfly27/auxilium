@@ -30,8 +30,6 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-
-
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS fiche (
             id_fiche INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,7 +68,7 @@ def init_db():
     ''')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS signalement (
+        CREATE TABLE IF NOT EXISTS signalements (
             id_signalement INTEGER PRIMARY KEY AUTOINCREMENT,
             id_utilisateur INT NOT NULL,
             id_fiche INT NOT NULL,
@@ -353,34 +351,53 @@ def accepterfiche(id_fiche):
 
         return redirect(url_for('checkfiche'))
 
+import os
+
 @app.route('/supprimerfiche/<int:id_fiche>')
 def supprimerfiche(id_fiche):
     """
-    Supprime une fiche avec son id et remet a jour tout les id
+    Supprime une fiche avec son id et remet à jour tous les id.
+    Supprime également l'image associée du dossier des uploads.
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif not session['username'] == 'admin':
+    elif session['username'] != 'admin':
         return redirect(url_for('fiches'))
     else:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM fiche WHERE id_fiche = ?', (id_fiche,))
-        conn.commit()
 
-        cursor.execute('''
-            UPDATE fiche
-            SET id_fiche = id_fiche - 1
-            WHERE id_fiche > ?;
-        ''', (id_fiche,))
-        conn.commit()
+        cursor.execute('SELECT img_url FROM fiche WHERE id_fiche = ?', (id_fiche,))
+        fiche = cursor.fetchone()
+        
+        if fiche:
+            image_path = fiche['img_url']
+            cursor.execute('DELETE FROM fiche WHERE id_fiche = ?', (id_fiche,))
+            conn.commit()
 
-        # Reintialiser l'auto incrementation de la table fiche
-        cursor.execute('''DELETE FROM sqlite_sequence WHERE name='fiche';''')
-        conn.commit()
+            cursor.execute('''
+                UPDATE fiche
+                SET id_fiche = id_fiche - 1
+                WHERE id_fiche > ?;
+            ''', (id_fiche,))
+            conn.commit()
 
-        fiches = cursor.fetchall() 
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='fiche';")
+            conn.commit()
+
+            full_image_path = os.path.join('static', image_path)
+            if os.path.exists(full_image_path):
+                try:
+                    os.remove(full_image_path)
+                    flash('Fiche et image supprimées avec succès!', 'success')
+                except Exception as e:
+                    flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
+            else:
+                flash('Image associée introuvable, mais fiche supprimée.', 'error')
+        else:
+            flash('Fiche introuvable.', 'error')
+
         conn.close()
 
         return redirect(url_for('checkfiche'))
@@ -465,7 +482,63 @@ def signaler():
     """
     Signaler une fiche ce qui l'envoie dans la page fiche signaler.
     """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    if request.method == "POST":
+        username = session['username']
+        message = request.form['content']
+        id_fiche = request.form['id_fiche']
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
+            id_user = cursor.fetchone()
+            id_user = id_user['id_utilisateur']
+            cursor.execute(
+                'INSERT INTO signalements (id_utilisateur, id_fiche, message) VALUES (?, ?, ?)', 
+                (id_user, id_fiche, message)
+            )
+            conn.commit()
+            flash("Fiche bien signaler, on vous remercie d'aider au bon fonctionnement du site !")
+        except Exception as e:
+            print(f"Erreur: {str(e)}")
+            flash("Erreur: Fiche non ajoutée", 'error')
+        finally:
+            if conn:
+                conn.close()
+
+    username = session['username']
+    print(f"{username} vient de signaler une fiche")
+
+    return redirect(url_for('fiches', id_fiche = id_fiche))
+
+@app.route('/cardreport')
+def cardreport():
+    """
+    Affiche les signalements non traités
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif session['username'] != 'admin':
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
     
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT signalements.id_signalement, utilisateurs.username, signalements.message, fiche.id_fiche, fiche.img_url  
+        FROM signalements
+        JOIN utilisateurs ON utilisateurs.id_utilisateur = signalements.id_utilisateur
+        JOIN fiche ON fiche.id_fiche = signalements.id_fiche;
+    ''')
+    signalements = cursor.fetchall()
+    conn.close()
+
+    return render_template('report.html', signalements=signalements)
 
 if __name__ == '__main__':
     init_db()
