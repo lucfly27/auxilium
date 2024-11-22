@@ -502,7 +502,7 @@ def signaler():
                 (id_user, id_fiche, message)
             )
             conn.commit()
-            flash("Fiche bien signaler, on vous remercie d'aider au bon fonctionnement du site !")
+            flash("Fiche bien signaler, on vous remercie de participer au bon fonctionnement du site !")
         except Exception as e:
             print(f"Erreur: {str(e)}")
             flash("Erreur: Fiche non ajoutée", 'error')

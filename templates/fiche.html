@@ -25,8 +25,7 @@
                     <h2>Signaler</h2>
                     <form method="POST" action="{{ url_for('signaler') }}">
                         <input type="hidden" name="id_fiche" value="{{ fiche['id_fiche'] }}">
-                        <label for="content">Contenu</label>
-                        <input class="objet" type="text" name="content" required>
+                        <textarea class="objet" name="content" placeholder="Le contenu de votre signalement" required></textarea>
                         <div id="flash-messages">
                             {% with messages = get_flashed_messages(with_categories=true) %}
                                 {% if messages %}

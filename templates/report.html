@@ -14,12 +14,12 @@
                 {% for signalement in signalements %}
                     <div class="signalements">
                         <a>
-                            <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="Fiche {{ signalement['id_fiche'] }}" class="fiches">
+                            <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="Fiche {{ signalement['id_fiche'] }}" class="fiche">
                         </a>                            
-                        <p>Fiche signalée par {{ signalement['username'] }} :</p>
-                        <p>Message : {{ signalement['message'] }}</p>
+                        <p class="text">Fiche signalée par {{ signalement['username'] }}</p>
+                        <p class="text">Message : {{ signalement['message'] }}</p>
                         <a href="{{ url_for('supprimerfiche', id_fiche=signalement['id_fiche']) }}">
-                            <button type="button" class="button">🗑️ Supprimer</button>
+                            <button type="button" class="button">🗑️</button>
                         </a>  
                     </div>
                 {% endfor %}

@@ -339,6 +339,11 @@ input {
 }
 
 .objet {
-    width: auto;
-    height: 100px;
+        resize: none; 
+        width: 93%;
+        height: 150px; 
+        padding: 10px;
+        border: 1px solid #ddd; 
+        border-radius: 5px;
+        font-size: 16px;
 }
