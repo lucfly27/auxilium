@@ -76,6 +76,21 @@ def init_db():
         );
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tag (
+            id_tag INTEGER PRIMARY KEY AUTOINCREMENT,
+            nom_tag TEXT NOT NULL
+        );
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS fiche_tag (
+            id_fiche INT NOT NULL,
+            id_tag INT NOT NULL
+        );
+    ''')
+
+
     cursor.execute('SELECT COUNT(*) FROM utilisateurs WHERE id_utilisateur = ? AND username = ?', ('1', 'admin'))
     exist = cursor.fetchone()[0]
 
@@ -259,6 +274,7 @@ def addcard():
         matiere = request.form['matiere']
         niveau = request.form['niveau']
         image = request.files['image']
+        tags = request.form['tags']
         if image and allowed_file(image.filename):
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -280,6 +296,7 @@ def addcard():
                     'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url, img_check) VALUES (?, ?, ?, ?, ?)', 
                     (id_user, matiere, niveau, image_path, '0')
                 )
+
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
                 username = session['username']
@@ -450,33 +467,6 @@ def fiche_detail(id_fiche):
 
     return render_template('fiche.html', fiche=fiche) 
 
-@app.route('/fiches/<string:matiere>')
-def fiche_tri_matiere(matiere):
-    """
-    Affiche les fiches d'une certaine matière.
-    """
-    if 'username' not in session:
-        flash('Veuillez vous connecter d\'abord', 'error')
-        return redirect(url_for('login', modal=True))
-    
-    matiere = matiere[0].upper() + matiere[1:]
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('SELECT 1 FROM fiche WHERE matiere = ? LIMIT 1', (matiere,))
-    matiere_exist = cursor.fetchone()
-
-    if not matiere_exist:
-        flash('Matière non trouvée', 'error')
-        conn.close()
-        return redirect(url_for('fiches'))  
-
-    cursor.execute('SELECT * FROM fiche WHERE matiere = ?', (matiere,))
-    fiches = cursor.fetchall()
-
-    conn.close()
-
-    return render_template('fiches.html', fiches=fiches)
-
 @app.route('/signaler', methods=['GET', 'POST'])
 def signaler():
     """
@@ -539,6 +529,10 @@ def cardreport():
     conn.close()
 
     return render_template('report.html', signalements=signalements)
+
+
+
+
 
 if __name__ == '__main__':
     init_db()

@@ -26,8 +26,12 @@
                 <option value="">Sélectionner une matière</option>
             </select>
         </div>
-        <div>
+        <div class="element">
                 <input class="sign" type="file" name="image" accept="image/*" placeholder="Image" required>
+        </div>
+        <div class="element">
+            <label class="text" for="tags">Ajouter des tags :</label>
+            <input class="sign" name="tags" placeholder="#maths #vecteurs #proprietes"></input>
         </div>
         <div class="element">
                 <div id="flash-messages">
@@ -47,7 +51,7 @@
         </div>
             </form>
         <div class="element">
-            <a class="text" href="{{ url_for('home') }}">Retour à l'accueil</a>
+            <a class="text" style="padding:5px;" href="{{ url_for('home') }}">Retour à l'accueil</a>
         </div>
     </div>
 </body>
