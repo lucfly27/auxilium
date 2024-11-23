@@ -10,6 +10,7 @@
     <div class="center">
         <div class="element">
             <h1>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</h1>
+            <p class="text">Tags : {{ fiche['tags'] }}</p>
         </div>
         <div class="element">
             <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiche">

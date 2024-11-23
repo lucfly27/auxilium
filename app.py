@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
@@ -275,6 +276,27 @@ def addcard():
         niveau = request.form['niveau']
         image = request.files['image']
         tags = request.form['tags']
+        nv_tag = False
+        tag = ''
+        liste_tags = []
+        for caractere in tags:
+            if caractere == '#':
+                if nv_tag == True:
+                    liste_tags.append(tag)
+                    tag = ''
+                    tag += caractere
+                elif nv_tag == False:
+                    nv_tag = True
+                    tag += caractere
+            elif caractere == ' ':
+                liste_tags.append(tag)
+                tag= ''
+                nv_tag = False
+            else:
+                tag += caractere
+        if not tag == '':
+            liste_tags.append(tag)
+                            
         if image and allowed_file(image.filename):
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -284,9 +306,9 @@ def addcard():
             cursor.execute("SELECT abreviation FROM niveau WHERE id_niveau = ?", (niveau,))
             nom_niveau = cursor.fetchone()
             nom_niveau = nom_niveau['abreviation']
-            filename = f"fiche_auxilium_{nom_matiere}_{nom_niveau}"
+            filename = f"{nom_matiere}_{nom_niveau}_{str(uuid.uuid4())}"
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            
+   
             try:
                 image.save("static/" + image_path) 
                 cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
@@ -296,11 +318,22 @@ def addcard():
                     'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url, img_check) VALUES (?, ?, ?, ?, ?)', 
                     (id_user, matiere, niveau, image_path, '0')
                 )
-
+                if len(liste_tags) > 0: 
+                    liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
+                    for tag in liste_tags:
+                        cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+                        existing_tag = cursor.fetchone()
+                        if not existing_tag:
+                            cursor.execute('INSERT INTO tag (nom_tag) VALUES (?)', (tag,))
+                            cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+                            existing_tag = cursor.fetchone()
+                        cursor.execute('SELECT id_fiche FROM fiche WHERE img_url = ?', (image_path,))
+                        id_fiche = cursor.fetchone()
+                        cursor.execute('INSERT INTO fiche_tag (id_fiche, id_tag) VALUES (?, ?)', (id_fiche[0], existing_tag[0],))
                 conn.commit()
                 flash('Fiche ajoutée avec succès!', 'success')
                 username = session['username']
-                print(f"{username} vient de demander à ajouter une fiche (Matière: {matiere}, Niveau: {niveau})")
+                print(f"{username} vient de demander à ajouter une fiche (Matière: {matiere}, Niveau: {niveau}, avec les tags {liste_tags})")
             except Exception as e:
                 print(f"Erreur: {str(e)}")
                 flash("Erreur: Fiche non ajoutée", 'error')
@@ -417,7 +450,7 @@ def supprimerfiche(id_fiche):
 
         conn.close()
 
-        return redirect(url_for('checkfiche'))
+        return redirect(url_for('home'))
 
 @app.route('/fiches')
 def fiches():
@@ -431,10 +464,22 @@ def fiches():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
-        JOIN matiere on matiere.id_matiere = fiche.id_matiere
-        JOIN niveau on niveau.id_niveau = fiche.id_niveau
-        WHERE fiche.img_check = 1;
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url, 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.img_check = 1
+        GROUP BY 
+            fiche.id_fiche;
     ''')
     fiches = cursor.fetchall() 
     conn.close()
@@ -453,10 +498,22 @@ def fiche_detail(id_fiche):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
-        JOIN matiere on matiere.id_matiere = fiche.id_matiere
-        JOIN niveau on niveau.id_niveau = fiche.id_niveau
-        WHERE img_check = 1 AND id_fiche = ?
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url, 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.img_check = 1 AND fiche.id_fiche = ?
+        GROUP BY 
+            fiche.id_fiche;
     ''', (id_fiche,))
     fiche = cursor.fetchone()
     conn.close()
