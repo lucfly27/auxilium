@@ -16,7 +16,12 @@
                                 <a>
                                     <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
                                 </a>                            
-                                <a>{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
+                                <a class="text">{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
+                                <a class="text">Tags: {{ fiche['tags'] }}</a>
+                                <form method="post" action="{{ url_for('other_tags', id_fiche=fiche['id_fiche']) }}" enctype="multipart/form-data">
+                                    <input class="sign" name="tags" placeholder="modifier les tags ?" required></input>
+                                    <button type="submit" class="button" style="background-color:blue; text-decoration: none;">Accepter en Modifiant les tags</button>
+                                </form>                                
                                 <a href="accepterfiche/{{ fiche['id_fiche'] }}">
                                     <button type="submit" class="button" style="background-color:green; text-decoration: none;">Accepter fiche</button>
                                 </a>   

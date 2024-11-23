@@ -365,10 +365,22 @@ def checkfiche():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT fiche.id_fiche, matiere.nom, niveau.abreviation, fiche.img_url FROM fiche
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
         JOIN matiere on matiere.id_matiere = fiche.id_matiere
         JOIN niveau on niveau.id_niveau = fiche.id_niveau
-        WHERE fiche.img_check = 0;
+        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.img_check = 0
+        GROUP BY
+            fiche.id_fiche;
     ''')
     fiches = cursor.fetchall() 
     conn.close()
@@ -400,8 +412,6 @@ def accepterfiche(id_fiche):
         conn.close()
 
         return redirect(url_for('checkfiche'))
-
-import os
 
 @app.route('/supprimerfiche/<int:id_fiche>')
 def supprimerfiche(id_fiche):
@@ -451,6 +461,64 @@ def supprimerfiche(id_fiche):
         conn.close()
 
         return redirect(url_for('home'))
+
+@app.route('/othertag/<int:id_fiche>', methods=['GET', 'POST'])
+def other_tags(id_fiche):
+    '''
+    Accepte la publication d'une fiche avec son id mais avec d'autre tag que ceux mis par l'utilisateurs 
+    '''
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not session['username'] == 'admin':
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
+
+    if request.method == 'POST':
+        tags = request.form['tags']
+        nv_tag = False
+        tag = ''
+        liste_tags = []
+        for caractere in tags:
+            if caractere == '#':
+                if nv_tag == True:
+                    liste_tags.append(tag)
+                    tag = ''
+                    tag += caractere
+                elif nv_tag == False:
+                    nv_tag = True
+                    tag += caractere
+            elif caractere == ' ':
+                liste_tags.append(tag)
+                tag= ''
+                nv_tag = False
+            else:
+                tag += caractere
+        if not tag == '':
+            liste_tags.append(tag)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM fiche_tag WHERE id_fiche = ?', (id_fiche,))
+        if len(liste_tags) > 0: 
+                    liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
+                    for tag in liste_tags:
+                        cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+                        existing_tag = cursor.fetchone()
+                        if not existing_tag:
+                            cursor.execute('INSERT INTO tag (nom_tag) VALUES (?)', (tag,))
+                            cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+                            existing_tag = cursor.fetchone()
+                        cursor.execute('INSERT INTO fiche_tag (id_fiche, id_tag) VALUES (?, ?)', (id_fiche, existing_tag[0],))
+        cursor.execute('''
+            UPDATE fiche
+            SET img_check = 1
+            WHERE id_fiche = ?
+        ''', (id_fiche,))
+        conn.commit()
+        fiches = cursor.fetchall() 
+        conn.close()
+
+        return redirect(url_for('checkfiche'))
 
 @app.route('/fiches')
 def fiches():
@@ -552,7 +620,7 @@ def signaler():
             flash("Fiche bien signaler, on vous remercie de participer au bon fonctionnement du site !")
         except Exception as e:
             print(f"Erreur: {str(e)}")
-            flash("Erreur: Fiche non ajoutée", 'error')
+            flash("Erreur: Fiche non signalée", 'error')
         finally:
             if conn:
                 conn.close()
@@ -587,8 +655,29 @@ def cardreport():
 
     return render_template('report.html', signalements=signalements)
 
-
-
+@app.route('/skipreport/<int:id_signalement>')
+def ignorer_signalement(id_signalement):
+    """
+    Pour ignorer un signalement
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif session['username'] != 'admin':
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
+    try: 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM signalements WHERE id_signalement = ?', (id_signalement,))
+        conn.commit()
+    except Exception as e:
+        print(f"Erreur: {str(e)}")
+        flash("Erreur: Fiche non signalée", 'error')
+    finally:
+        if conn:
+            conn.close()        
+    return redirect(url_for('cardreport'))
 
 
 if __name__ == '__main__':

@@ -13,14 +13,15 @@
             {% if signalements %}
                 {% for signalement in signalements %}
                     <div class="signalements">
-                        <a>
-                            <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="Fiche {{ signalement['id_fiche'] }}" class="fiche">
-                        </a>                            
+                        <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiche">                          
                         <p class="text">Fiche signalée par {{ signalement['username'] }}</p>
                         <p class="text">Message : {{ signalement['message'] }}</p>
                         <a href="{{ url_for('supprimerfiche', id_fiche=signalement['id_fiche']) }}">
                             <button type="button" class="button">🗑️</button>
-                        </a>  
+                        </a>
+                        <a href="{{ url_for('ignorer_signalement', id_signalement=signalement['id_signalement']) }}">
+                            <button type="button" class="button">Ignorer le signalement</button>
+                        </a>
                     </div>
                 {% endfor %}
             {% else %}
