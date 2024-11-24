@@ -12,8 +12,23 @@
             <h1>Bienvenue sur Auxilium</h1>
         </div>
         <div class="element">
-            <input class = search id="recherche" type="search" placeholder="Rechercher une fiche"> 
+            <form action="{{ url_for('search') }}" method="get">
+                <input class="search" id="recherche" name="tag" type="search" placeholder="Rechercher une fiche">
+            </form>
         </div>
+        <div class="element">
+            <div id="flash-messages" class="text">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-messages flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>        
         <div class="element">
             <form action="{{ url_for('fiches') }}" method="get">
                 <button type="submit"> Explorer </button>

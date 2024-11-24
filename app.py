@@ -4,12 +4,23 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import uuid
+import unicodedata
 
 app = Flask(__name__)
 app.secret_key = 'une_cle_secrete'  # Clé secrète pour sécuriser les sessions
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def transformer_chaine(chaine):
+    """
+    Prend une chaine de caractere remplace les espaces par des _, enleve les accents et met tout en minuscule
+    """
+    chaine = chaine.replace(" ", "_")
+    chaine = unicodedata.normalize('NFD', chaine)
+    chaine = ''.join(c for c in chaine if unicodedata.category(c) != 'Mn')
+    chaine = chaine.lower()
+    return chaine
 
 def get_db_connection():
     """
@@ -22,7 +33,6 @@ def get_db_connection():
 @app.route('/')
 def accueil():
     return render_template('accueil.html')
-
 
 def init_db():
     """
@@ -288,10 +298,6 @@ def addcard():
                 elif nv_tag == False:
                     nv_tag = True
                     tag += caractere
-            elif caractere == ' ':
-                liste_tags.append(tag)
-                tag= ''
-                nv_tag = False
             else:
                 tag += caractere
         if not tag == '':
@@ -321,6 +327,7 @@ def addcard():
                 if len(liste_tags) > 0: 
                     liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
                     for tag in liste_tags:
+                        tag = transformer_chaine(tag)
                         cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
                         existing_tag = cursor.fetchone()
                         if not existing_tag:
@@ -434,6 +441,7 @@ def supprimerfiche(id_fiche):
         if fiche:
             image_path = fiche['img_url']
             cursor.execute('DELETE FROM fiche WHERE id_fiche = ?', (id_fiche,))
+            cursor.execute('DELETE FROM fiche_tag WHERE id_fiche = ?', (id_fiche,))
             conn.commit()
 
             cursor.execute('''
@@ -451,10 +459,12 @@ def supprimerfiche(id_fiche):
                 try:
                     os.remove(full_image_path)
                     flash('Fiche et image supprimées avec succès!', 'success')
+                    print(f'fiche id:{id_fiche} supprimée')
                 except Exception as e:
                     flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
             else:
                 flash('Image associée introuvable, mais fiche supprimée.', 'error')
+                print(f'fiche id:{id_fiche} supprimée de la bdd mais image non trouvée')
         else:
             flash('Fiche introuvable.', 'error')
 
@@ -502,6 +512,7 @@ def other_tags(id_fiche):
         if len(liste_tags) > 0: 
                     liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
                     for tag in liste_tags:
+                        tag = transformer_chaine(tag)
                         cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
                         existing_tag = cursor.fetchone()
                         if not existing_tag:
@@ -678,6 +689,57 @@ def ignorer_signalement(id_signalement):
         if conn:
             conn.close()        
     return redirect(url_for('cardreport'))
+
+@app.route('/search')
+def search():
+    """
+    Rechercher une fiche avec un tag
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    tag = request.args.get('tag')
+    tag = transformer_chaine(tag)
+    if not tag:
+        return redirect(url_for('home'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+    id_tag = cursor.fetchone()
+    if not id_tag:
+        tag = "#" + tag
+        cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (tag,))
+        id_tag = cursor.fetchone()
+        if not id_tag:
+            flash('Aucun résultat trouvé pour ce tag.', 'info')
+            conn.close()
+            return redirect(url_for('home'))
+
+    cursor.execute('''
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url, 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.img_check = 1
+            AND fiche_tag.id_tag = ?
+        GROUP BY 
+            fiche.id_fiche;
+    ''', (id_tag[0],))
+    fiches = cursor.fetchall()
+    conn.close()
+
+    return render_template('fiches.html', fiches=fiches)
 
 
 if __name__ == '__main__':
