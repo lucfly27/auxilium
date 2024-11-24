@@ -741,6 +741,42 @@ def search():
 
     return render_template('fiches.html', fiches=fiches)
 
+@app.route('/request')
+def request():
+    """
+    Permet a un utilisateurs de voir les fiches qu'il a ajouter et/ou demander a ajouter
+    """
+    if "username" not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    username = session[username]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.id_utilisateurs = ?
+        GROUP BY
+            fiche.id_fiche;
+    ''', id_utilisateur)
+    fiches = cursor.fetchall()
+    conn.close()
+
+    return render_template('request.html', fiches=fiches)
+
+
 
 if __name__ == '__main__':
     init_db()
