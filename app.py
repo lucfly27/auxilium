@@ -357,8 +357,8 @@ def addcard():
     conn.close()
     return render_template('addcard.html', niveaux=niveaux)
 
-@app.route('/checkfiche')
-def checkfiche():
+@app.route('/checkrequest')
+def checkrequest():
     """
     Affiche les fiches pas encore traiter
     """
@@ -380,19 +380,19 @@ def checkfiche():
             GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
         FROM 
             fiche
-        JOIN matiere on matiere.id_matiere = fiche.id_matiere
-        JOIN niveau on niveau.id_niveau = fiche.id_niveau
-        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
-        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE 
             fiche.img_check = 0
         GROUP BY
             fiche.id_fiche;
     ''')
-    fiches = cursor.fetchall() 
+    fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('checkfiches.html', fiches=fiches)
+    return render_template('checkrequest.html', fiches=fiches)
 
 @app.route('/accepterfiche/<int:id_fiche>')
 def accepterfiche(id_fiche):
@@ -418,7 +418,7 @@ def accepterfiche(id_fiche):
         fiches = cursor.fetchall() 
         conn.close()
 
-        return redirect(url_for('checkfiche'))
+        return redirect(url_for('checkrequest'))
 
 @app.route('/supprimerfiche/<int:id_fiche>')
 def supprimerfiche(id_fiche):
@@ -529,7 +529,7 @@ def other_tags(id_fiche):
         fiches = cursor.fetchall() 
         conn.close()
 
-        return redirect(url_for('checkfiche'))
+        return redirect(url_for('checkrequest'))
 
 @app.route('/fiches')
 def fiches():
@@ -553,8 +553,8 @@ def fiches():
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
-        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
-        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE 
             fiche.img_check = 1
         GROUP BY 
@@ -587,8 +587,8 @@ def fiche_detail(id_fiche):
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
-        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
-        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE 
             fiche.img_check = 1 AND fiche.id_fiche = ?
         GROUP BY 
@@ -641,8 +641,8 @@ def signaler():
 
     return redirect(url_for('fiches', id_fiche = id_fiche))
 
-@app.route('/cardreport')
-def cardreport():
+@app.route('/checkreport')
+def checkreport():
     """
     Affiche les signalements non traités
     """
@@ -664,7 +664,7 @@ def cardreport():
     signalements = cursor.fetchall()
     conn.close()
 
-    return render_template('report.html', signalements=signalements)
+    return render_template('checkreport.html', signalements=signalements)
 
 @app.route('/skipreport/<int:id_signalement>')
 def ignorer_signalement(id_signalement):
@@ -688,7 +688,7 @@ def ignorer_signalement(id_signalement):
     finally:
         if conn:
             conn.close()        
-    return redirect(url_for('cardreport'))
+    return redirect(url_for('checkreport'))
 
 @app.route('/search')
 def search():
@@ -728,8 +728,8 @@ def search():
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
-        JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
-        JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE 
             fiche.img_check = 1
             AND fiche_tag.id_tag = ?

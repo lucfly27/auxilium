@@ -47,15 +47,31 @@
         <img src="{{ url_for('static', filename='user.png')}}" class="usermd" alt ="Icon">
         <img src="{{ url_for('static', filename='close.png')}}" class="closebtn" onclick="closeMenu()" alt="Close" style="cursor: pointer;">
         <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
-        <a>Credits</a>
+        <a href="#" onclick="openModal()">Credits</a>
+        <a href="">Vos fiches</a>
+        <a href="">Vos signalement</a>
         {% if username == 'admin' %}
-            <a href="{{ url_for('checkfiche') }}"">Demande ajout fiche</a>
-            <a href="{{ url_for('cardreport') }}">Signalement fiche</a>
+            <a href="{{ url_for('checkrequest') }}"">Demande ajout fiche</a>
+            <a href="{{ url_for('checkreport') }}">Signalement fiche</a>
         {% endif %}
         <a href="{{ url_for('logout') }}">Deconnexion</a>
     </div>
 
+    <div id="modal" class="credit_modal">
+        <div class="credit-modal-content">
+            <a href="https://github.com/lucfly27">
+                <img src="{{ url_for('static', filename='logo_lj.png') }}" class="user" alt="Icon">
+            </a>
+            <span class="close">&times;</span>
+            <h3 class="text"> Credits: </h3>
+            <p class="text"> Dev: Luccas Aubert </p>
+            <p class="text"> Superviseur: M.Falques </p>
+            <a class="text" href="https://github.com/lucfly27/auxilium">Github du projet</a>
+        </div>
+    </div>
+
     <script>
+        /* Menu deroulant: */
         function openMenu() {
             document.getElementById("menuDeroulant").style.width = "200px";
         }
@@ -63,6 +79,25 @@
         function closeMenu() {
             document.getElementById("menuDeroulant").style.width = "0";
         }
+
+        /* Modal credits: */
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('modal')) {
+            openModal();  
+        }
+        document.querySelector('.close').addEventListener('click', closeModal);
     </script>
 
 </body>
