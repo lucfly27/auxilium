@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Auxilium</title>
+</head>
+<body>
+    <div class="center">
+        <h1>Vos fiches:</h1>  
+        <div class="element">
+            <div class="container_fiche">
+                    {% for fiche in fiches %}
+                            {% if fiche['img_url'] %}
+                                <div class="element">
+                                    <p class="text">Fiche: {{ fiche['nom'] }}, {{ fiche['abreviation'] }}</h1>
+                                    <p class="text">Tags : {{ fiche['tags'] }}</p>
+                                </div>
+                                <div class="element">
+                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiches">
+                                        {% if fiche['img_check'] == 1 %} 
+                                            <p class="text"> Votre fiche a été acceptée </p>
+                                        {% elif fiche['img_check'] == 0 %}
+                                            <p class="text"> Votre fiche n'a pas encore été acceptée </p>
+                                        {% endif %}
+                                </div> 
+                            {% else %}
+                                Pas d'image
+                            {% endif %}
+                    {% endfor %}
+            </div>
+            <div class="element">
+                <form action="{{ url_for('home') }}" method="get">
+                    <button type="submit" class="fixbtn"> Retour à l'accueil </button>
+                </form>   
+            </div>
+        </div>
+    </div>
+</body>

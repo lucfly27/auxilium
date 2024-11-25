@@ -741,8 +741,8 @@ def search():
 
     return render_template('fiches.html', fiches=fiches)
 
-@app.route('/request')
-def request():
+@app.route('/userrequest')
+def userrequest():
     """
     Permet a un utilisateurs de voir les fiches qu'il a ajouter et/ou demander a ajouter
     """
@@ -750,15 +750,18 @@ def request():
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
 
-    username = session[username]
+    username = session['username']
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username  = ?', (username,))
+    id_utilisateur = cursor.fetchone()
     cursor.execute('''
         SELECT 
             fiche.id_fiche, 
             matiere.nom, 
             niveau.abreviation, 
             fiche.img_url,
+            fiche.img_check,
             GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
         FROM 
             fiche
@@ -767,15 +770,14 @@ def request():
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE 
-            fiche.id_utilisateurs = ?
+            fiche.id_utilisateur = ?
         GROUP BY
             fiche.id_fiche;
     ''', id_utilisateur)
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('request.html', fiches=fiches)
-
+    return render_template('userrequest.html', fiches=fiches)
 
 
 if __name__ == '__main__':
