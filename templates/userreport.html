@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Auxilium</title>
+</head>
+<body>
+    <div class="center">
+        <h1>Fiches signalées :</h1>  
+        <div class="element">
+            <p class="text">Si votre signalement n'apparaît pas, ne vous inquiétez pas, il a sûrement déjà été traité</p>
+            {% if signalements %}
+                {% for signalement in signalements %}
+                    <div class="signalements">
+                        <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiche">                          
+                        <p class="text">Message : {{ signalement['message'] }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text">Vous n'avez signalé aucune fiche ou vos fiches signalées ont été traitées</p>
+            {% endif %}
+        </div>
+        <div class="element">
+            <form action="{{ url_for('home') }}" method="get">
+                <button type="submit" class="fixbtn">Retour à l'accueil</button>
+            </form>   
+        </div>
+    </div>
+</body>
+</html>

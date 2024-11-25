@@ -257,6 +257,9 @@ def inscription():
 
 @app.route('/get-matieres')
 def get_matieres():
+    """
+    Permet d'envoyer au front les matieres selon le niveau selectionner lors de l'ajout de fiches
+    """
     niveau_id = request.args.get('niveau_id')
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -267,14 +270,14 @@ def get_matieres():
 
 def allowed_file(filename):
     """
-    Vérifie si le fichier ne contient rien d'offensant
+    Vérifie si le fichier est au bon format pour etre une image
     """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 @app.route('/addcard', methods=['GET', 'POST'])
 def addcard():
     """
-    Ajoute une fiche au site en sélectionnant une matière, un niveau, une image.
+    Ajoute une fiche au site en sélectionnant une matière, un niveau, une image
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
@@ -423,8 +426,8 @@ def accepterfiche(id_fiche):
 @app.route('/supprimerfiche/<int:id_fiche>')
 def supprimerfiche(id_fiche):
     """
-    Supprime une fiche avec son id et remet à jour tous les id.
-    Supprime également l'image associée du dossier des uploads.
+    Supprime une fiche avec son id et remet à jour tous les id
+    Supprime également l'image associée du dossier des uploads
     """
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
@@ -778,6 +781,39 @@ def userrequest():
     conn.close()
 
     return render_template('userrequest.html', fiches=fiches)
+
+@app.route('/userreport')
+def userreport():
+    """
+    Affiche les signalements fais par un utilisateur
+    """
+    if "username" not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    username = session['username']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username  = ?', (username,))
+    id_utilisateur = cursor.fetchone()[0]
+    cursor.execute('''
+        SELECT 
+            signalements.id_signalement, 
+            utilisateurs.username, 
+            signalements.message, 
+            fiche.id_fiche, 
+            fiche.img_url  
+        FROM 
+            signalements
+        JOIN utilisateurs ON utilisateurs.id_utilisateur = signalements.id_utilisateur
+        JOIN fiche ON fiche.id_fiche = signalements.id_fiche
+        WHERE 
+            utilisateurs.id_utilisateur = ?;
+    ''', (id_utilisateur,))
+    signalements = cursor.fetchall()
+    conn.close()
+
+    return render_template('userreport.html', signalements=signalements)
 
 
 if __name__ == '__main__':

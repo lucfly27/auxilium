@@ -49,7 +49,7 @@
         <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
         <a href="#" onclick="openModal()">Credits</a>
         <a href="{{ url_for('userrequest') }}">Vos fiches</a>
-        <a href="">Vos signalement</a>
+        <a href="{{ url_for('userreport') }}">Vos signalement</a>
         {% if username == 'admin' %}
             <a href="{{ url_for('checkrequest') }}"">Demande ajout fiche</a>
             <a href="{{ url_for('checkreport') }}">Signalement fiche</a>
