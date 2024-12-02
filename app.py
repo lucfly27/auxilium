@@ -57,7 +57,8 @@ def init_db():
             id_utilisateur INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            admin_perm INT NOT NULL
         );
     ''')
 
@@ -100,14 +101,6 @@ def init_db():
             id_tag INT NOT NULL
         );
     ''')
-
-
-    cursor.execute('SELECT COUNT(*) FROM utilisateurs WHERE id_utilisateur = ? AND username = ?', ('1', 'admin'))
-    exist = cursor.fetchone()[0]
-
-    if not exist:
-        admin_password = 'scrypt:32768:8:1$hok6AfH4DTJQWwAm$4c4b7cbd977b84a9ce09489fde5c7249c92a7736c1c8e8b5bbefc1c157ba1c407f50c81d484965b68659da75773cc418f3d454f73bb2af67328e09c20c25daa9'
-        cursor.execute('INSERT INTO utilisateurs (username, email, password) VALUES (?, ?, ?)', ('admin', 'luccas3684@gmail.com', admin_password))
 
 
     cursor.execute('SELECT COUNT(*) FROM niveau WHERE abreviation = ? AND nom = ?', ('2nd', 'seconde'))
@@ -183,6 +176,20 @@ def init_db():
     conn.commit()  
     conn.close()
 
+def check_admin(username):
+    """
+    Renvoi un booleen pour savoir si l'utilisateurs est admin ou pas
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT admin_perm FROM utilisateurs WHERE username = ?', (username,))
+    admin_perm = cursor.fetchone()
+    conn.close()
+
+    if admin_perm and admin_perm[0] == 1:  
+        return True
+    return False
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
@@ -219,7 +226,8 @@ def home():
         return redirect(url_for('login', modal=True))
     
     username = session['username']
-    return render_template('home.html', username=username)
+    perm = check_admin(username)
+    return render_template('home.html', username=username, perm=perm)
 
 @app.route('/logout')
 def logout():
@@ -243,8 +251,8 @@ def inscription():
         cursor = conn.cursor()
 
         try:
-            cursor.execute('INSERT INTO utilisateurs (username, email, password) VALUES (?, ?, ?)', 
-                           (username, email, password))
+            cursor.execute('INSERT INTO utilisateurs (username, email, password, admin_perm) VALUES (?, ?, ?, ?)', 
+                           (username, email, password, 0))
             conn.commit()  
             print(f'Compte créé avec succès pour {username}!')
             return redirect(url_for('home'))
@@ -368,7 +376,7 @@ def checkrequest():
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif not session['username'] == 'admin':
+    elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     
@@ -405,7 +413,7 @@ def accepterfiche(id_fiche):
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif not session['username'] == 'admin':
+    elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     else:
@@ -432,7 +440,7 @@ def supprimerfiche(id_fiche):
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif session['username'] != 'admin':
+    elif not check_admin(session['username']):
         return redirect(url_for('fiches'))
     else:
         conn = get_db_connection()
@@ -483,7 +491,7 @@ def other_tags(id_fiche):
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif not session['username'] == 'admin':
+    elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
 
@@ -652,7 +660,7 @@ def checkreport():
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif session['username'] != 'admin':
+    elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     
@@ -677,7 +685,7 @@ def ignorer_signalement(id_signalement):
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    elif session['username'] != 'admin':
+    elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
     try: 
