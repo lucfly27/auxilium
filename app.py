@@ -836,9 +836,89 @@ def listuser():
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
 
-    # a completer
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT 
+            id_utilisateur,
+            username,
+            email,
+            admin_perm
+        FROM 
+            utilisateurs;
+    ''')
+    utilisateurs = cursor.fetchall() 
+    conn.close()
 
     return render_template('listuser.html', utilisateurs=utilisateurs)   
+
+@app.route('/addadmin/<int:id_utilisateur>')
+def addadmin(id_utilisateur):
+    """
+    Permet de donner les droits admin
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not check_admin(session['username']):
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT 
+            admin_perm 
+        FROM 
+            utilisateurs 
+        WHERE 
+            id_utilisateur = ?;
+    ''', (id_utilisateur,))
+    perm = cursor.fetchone[0]
+    if perm == 0:
+        cursor.execute('''
+            UPDATE utilisateurs
+            SET admin_perm = 1
+            WHERE id_utilisateur = ?;
+        ''', (id_utilisateur,))
+        flash("Permission administrateur ajoutée")
+    else:
+        flash("Cette utilisateur est deja admin")
+    conn.close()
+    return redirect(url_for('listuser'))
+
+@app.route('/removeadmin/<int:id_utilisateur>')
+def removeadmin(id_utilisateur):
+    """
+    Permet de retirer les droits admin
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not check_admin(session['username']):
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT 
+            admin_perm 
+        FROM 
+            utilisateurs 
+        WHERE 
+            id_utilisateur = ?;
+    ''', (id_utilisateur,))
+    perm = cursor.fetchone()[0]
+    if perm == 1:
+        cursor.execute('''
+            UPDATE utilisateurs
+            SET admin_perm = 0
+            WHERE id_utilisateur = ?;
+        ''', (id_utilisateur,))
+        flash("Permission administrateur retirée")
+    else:
+        flash("Cette utilisateur est pas admin")
+    conn.close()
+    return redirect(url_for('listuser'))
 
 if __name__ == '__main__':
     init_db()
