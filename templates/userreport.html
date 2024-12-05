@@ -8,9 +8,11 @@
 </head>
 <body>
     <div class="center">
-        <h1>Fiches signalées :</h1>  
-        <div class="element">
+        <div class="head">
+            <h1>Fiches signalées :</h1>  
             <p class="text">Si votre signalement n'apparaît pas, ne vous inquiétez pas, il a sûrement déjà été traité</p>
+        </div>
+        <div class="element">
             {% if signalements %}
                 {% for signalement in signalements %}
                     <div class="signalements">
