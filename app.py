@@ -823,6 +823,22 @@ def userreport():
 
     return render_template('userreport.html', signalements=signalements)
 
+@app.route('/listuser')
+def listuser():
+    """
+    Affiche les comptes inscrit sur le site; leur username, leur mail
+    Permet de donner les perm admin
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not check_admin(session['username']):
+        flash("Vous ne pouvez pas accéder à ceci", 'error')
+        return redirect(url_for('fiches'))
+
+    # a completer
+
+    return render_template('listuser.html', utilisateurs=utilisateurs)   
 
 if __name__ == '__main__':
     init_db()

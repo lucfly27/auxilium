@@ -49,10 +49,11 @@
         <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
         <a href="#" onclick="openModal()">Credits</a>
         <a href="{{ url_for('userrequest') }}">Vos fiches</a>
-        <a href="{{ url_for('userreport') }}">Vos signalement</a>
+        <a href="{{ url_for('userreport') }}">Vos signalements</a>
         {% if perm %}
-            <a href="{{ url_for('checkrequest') }}"">Demande ajout fiche</a>
-            <a href="{{ url_for('checkreport') }}">Signalement fiche</a>
+            <a href="{{ url_for('checkrequest') }}"">Ajout fiches</a>
+            <a href="{{ url_for('checkreport') }}">Signalements</a>
+            <a href="{{ url_for('listuser') }}">Utilisateurs</a>
         {% endif %}
         <a href="{{ url_for('logout') }}">Deconnexion</a>
     </div>
