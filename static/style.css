@@ -120,6 +120,15 @@
         margin-bottom: 15px;
         border: 8px solid #92dce5;
     }
+
+    table {
+        width: 90%;
+        font-size: 12px;
+    }
+
+    td, th {
+        padding: 8px;
+    }
 }
 
 /* pour ecran ordi/tablette */
@@ -423,3 +432,45 @@ input {
         font-size: 16px;
 }
 
+table {
+    width: 80%; 
+    max-width: 600px; 
+    margin: 20px auto; 
+    border-collapse: collapse;
+    font-size: 14px;
+    background-color: #f8f7f9; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #fcafe9; 
+    color: white;
+    text-transform: uppercase;
+}
+
+thead th {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+tbody tr {
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease-in-out;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #fdf3f9; 
+}
+
+tbody tr:hover {
+    background-color: #fce0eb; 
+}
+
+td {
+    padding: 10px;
+    text-align: left;
+    color: #333;
+}

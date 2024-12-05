@@ -7,6 +7,51 @@
     <title>Auxilium</title>
 </head>
 <body>
+    <div class="center">
+        <div class="head">
+            <h1>Liste utilisateurs:</h1>
+        </div>
+        <div class="element">
+            <table>
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for utilisateur in utilisateurs %}
+                    {% if utilisateur['id_utilisateur'] %}
+                    <tr>
+                        <td> {{ utilisateur['id_utilisateur'] }} </td>
+                        <td> {{ utilisateur['username'] }} </td>
+                        <td> {{ utilisateur['email'] }} </td>
+                        <td>
+
+                        </td>
+                      </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="element">
+            <form action="{{ url_for('home') }}" method="get">
+                <button type="submit" class="fixbtn"> Retour à l'accueil </button>
+            </form>   
+        </div>
+    </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <script>
+              alert("{{ message }}");
+          </script>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
 </body>
 </html>
