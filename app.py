@@ -873,13 +873,14 @@ def addadmin(id_utilisateur):
         WHERE 
             id_utilisateur = ?;
     ''', (id_utilisateur,))
-    perm = cursor.fetchone[0]
+    perm = cursor.fetchone()[0]
     if perm == 0:
         cursor.execute('''
             UPDATE utilisateurs
             SET admin_perm = 1
             WHERE id_utilisateur = ?;
         ''', (id_utilisateur,))
+        conn.commit()
         flash("Permission administrateur ajoutée")
     else:
         flash("Cette utilisateur est deja admin")
@@ -914,6 +915,7 @@ def removeadmin(id_utilisateur):
             SET admin_perm = 0
             WHERE id_utilisateur = ?;
         ''', (id_utilisateur,))
+        conn.commit()
         flash("Permission administrateur retirée")
     else:
         flash("Cette utilisateur est pas admin")
