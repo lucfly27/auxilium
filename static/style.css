@@ -98,22 +98,6 @@
         padding: 10px 20px;
         font-size: 15px;
         border-radius: 4px;
-        animation-name: btnanim;
-        animation-duration: 5s; 
-        animation-iteration-count: infinite; 
-        animation-timing-function: linear; 
-    }
-    
-    @keyframes btnanim {
-        0% {
-            background-color: #92dce5; 
-        }
-        50% {
-            background-color: #fcafe9;
-        }
-        100% {
-            background-color: #92dce5;
-        }
     }   
 
     .head {
@@ -219,22 +203,6 @@
         padding: 10px 20px;
         font-size: 16px;
         border-radius: 8px;
-        animation-name: btnanim;
-        animation-duration: 5s; 
-        animation-iteration-count: infinite; 
-        animation-timing-function: linear; 
-    }
-    
-    @keyframes btnanim {
-        0% {
-            background-color: #92dce5; 
-        }
-        50% {
-            background-color: #fcafe9;
-        }
-        100% {
-            background-color: #92dce5;
-        }
     }  
 
     .head {
