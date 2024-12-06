@@ -18,6 +18,7 @@
                     <th>Id</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Droits admin</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,7 +29,15 @@
                         <td> {{ utilisateur['username'] }} </td>
                         <td> {{ utilisateur['email'] }} </td>
                         <td>
-
+                        {% if utilisateur['admin_perm'] == 1 %}
+                          <form action="/removeadmin/{{ utilisateur['id_utilisateur'] }}" method="GET">
+                            <button type="submit" class="button">Enlever les droits</button>
+                          </form>                         
+                        {% elif utilisateur['admin_perm'] == 0 %}
+                          <form action="/addadmin/{{ utilisateur['id_utilisateur'] }}" method="GET">
+                            <button type="submit" class="button">Ajouter les droits</button>
+                          </form>                        
+                        {% endif %}
                         </td>
                       </tr>
                     {% endif %}
