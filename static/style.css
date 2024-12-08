@@ -12,8 +12,20 @@
         text-align: center;
     }
 
+    .text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 2rem;
+        color: #7d7c7d;
+        text-align: center;
+        font-size: 22px;
+    }   
+    
     select {
-        width: 330px;
+        width: 320px;
         height: 30px;
         display: flex;
         margin-left: auto;
@@ -23,6 +35,8 @@
         background-color: #fcafe9;
         border-style: none;
         margin-top: 5px;
+        border: 1px solid #7d7c7d;
+        border-radius: 5px;
     }
 
     .sign {
@@ -115,15 +129,26 @@
     }
 
     td, th {
-        padding: 8px;
+        padding: 2px;
     }
 }
 
 /* pour ecran ordi/tablette */
 @media (min-width: 800px) {
+    .text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 2rem;
+        color: #7d7c7d;
+        text-align: center;
+    }
+
     select {
-        width: 500px;
-        height: 30px;
+        width: 530px;
+        height: 35px;
         display: flex;
         margin-left: auto;
         margin-right: auto;
@@ -132,6 +157,8 @@
         background-color: #fcafe9;
         border-style: none;
         margin-top: 5px;
+        border: 1px solid #7d7c7d;
+        border-radius: 5px;
     }
 
     .sign {
@@ -232,7 +259,6 @@ button {
     cursor: pointer;
     background-color: #92dce5;
     color: white;
-    border: 3px solid #7d7c7d;
     border-radius: 5px;
     display: flex;
     margin-left: auto;
@@ -240,6 +266,7 @@ button {
     margin-top: 5px;
     justify-content: center;
     align-items: center;
+    border: none;
 }
 
 h1 {
@@ -248,17 +275,6 @@ h1 {
     align-items: center;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     font-size: 3rem;
-    color: #7d7c7d;
-    text-align: center;
-}
-
-.text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    font-size: 2rem;
     color: #7d7c7d;
     text-align: center;
 }
