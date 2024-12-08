@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Auxilium</title>
 </head>
 <body>
@@ -20,11 +20,15 @@
                         <p class="text">Fiche signalée par {{ signalement['username'] }}</p>
                         <p class="text">Message : {{ signalement['message'] }}</p>
                         <a href="{{ url_for('supprimerfiche', id_fiche=signalement['id_fiche']) }}">
-                            <button type="button" class="button">🗑️</button>
+                            <button type="button" class="button">
+                                <span class="material-symbols-outlined">
+                                    delete
+                                </span>
+                            </button>
                         </a>
-                        <a href="{{ url_for('ignorer_signalement', id_signalement=signalement['id_signalement']) }}">
+                        <form action="{{ url_for('ignorer_signalement', id_signalement=signalement['id_signalement']) }}" method="get">
                             <button type="button" class="button">Ignorer le signalement</button>
-                        </a>
+                        </form>
                     </div>
                 {% endfor %}
             {% else %}
