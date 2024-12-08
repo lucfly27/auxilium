@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" />
     <title>Auxilium</title>
 </head>
 <body>
@@ -46,10 +47,14 @@
             </table>
         </div>
         <div class="element">
-            <form action="{{ url_for('home') }}" method="get">
-                <button type="submit" class="fixbtn"> Retour à l'accueil </button>
-            </form>   
-        </div>
+          <form action="{{ url_for('home') }}" method="get">
+              <button type="submit" class="fixbtn"> 
+                  <span class="material-symbols-outlined">
+                      home
+                  </span>
+              </button>
+          </form>   
+      </div>
     </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
