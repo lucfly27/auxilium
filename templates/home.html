@@ -13,13 +13,18 @@
             <h1>Bienvenue sur Auxilium</h1>
         </div>
         <div class="element">
-            <form action="{{ url_for('search') }}" method="get">
-                <input type="search" name="tag" id="recherche" placeholder="Rechercher une fiche..." class="sign">
+            <form action="{{ url_for('search') }}" method="get"  class="search">
+                <input type="search" name="tag" id="recherche" placeholder="Rechercher une fiche..." class="searchbar">
+                <button class="searchbtn">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </button>
             </form>            
         </div>
         <div class="element">
             <form action="{{ url_for('fiches') }}" method="get">
-                <button type="submit"> Explorer </button>
+                <button type="submit" style="margin-top: 20px;"> Explorer </button>
             </form>
         </div>
     </div>
