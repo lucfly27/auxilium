@@ -241,6 +241,7 @@
     }  
 
     .head {
+        margin-top: 20px;
         margin-bottom: 15px;
         border : 8px solid #92dce5;
         margin-right: 30%;
@@ -251,6 +252,9 @@
 body {
     background-color: #f8f7f9;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding-bottom: 60px; 
+    box-sizing: border-box; 
 }
 
 button {
