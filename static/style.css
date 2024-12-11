@@ -54,13 +54,17 @@
     }
 
     .search{
+        all: unset;
         width: 300px;
         height: 30px;
         display: flex;
         margin-left: auto;
         margin-right: auto;
-        justify-content: right;
-        align-items: right;
+        text-align: left;
+        justify-content: center;
+        border: 3px solid #7d7c7d;
+        border-radius: 10px;
+
     }
 
     .modal-content {
@@ -176,13 +180,16 @@
     }
 
     .search{
-        width: 400px;
+        all: unset;
+        width: 410px;
         height: 30px;
         display: flex;
         margin-left: auto;
         margin-right: auto;
-        justify-content: right;
-        align-items: right;
+        text-align: left;
+        justify-content: center;
+        border: 3px solid #7d7c7d;
+        border-radius: 10px;
     }
 
     .modal-content {
@@ -201,6 +208,12 @@
         border: 3px solid #1b2a3f;
         width: 300px;
         border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .credit-modal-content
+    .text {
+        font-size: 28px;
     }
 
     .container_fiche {
@@ -349,6 +362,7 @@ input {
     overflow-x: hidden; 
     transition: 0.5s; 
     padding-top: 60px; 
+    z-index: 1;
 }
 
 .menu-deroulant a {
@@ -468,26 +482,13 @@ tbody tr:hover {
 td {
     padding: 10px;
     text-align: left;
-    color: #333;
+    color: #7d7c7d;
 }
 
 .button-container {
     display: flex;
     justify-content: center;
     gap: 5px;
-}
-
-.search {
-    all: unset;
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    justify-content: center;
-    width: 410px;
-    height: 30px;
-    border: 3px solid #7d7c7d;
-    border-radius: 10px;
 }
 
 .searchbar {
@@ -498,8 +499,8 @@ td {
 
 .searchbtn {
     all: unset;
-    z-index: 1;
     height: 30px;
     font-size: 30px;
     cursor: pointer;
+    z-index: 0;
 }
