@@ -16,33 +16,35 @@
             <div class="container_fiche">
                     {% for fiche in fiches %}
                             {% if fiche['img_url'] %}
-                                <a>
-                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
-                                </a>                            
-                                <a class="text">{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
-                                <a class="text">Tags: {{ fiche['tags'] }}</a> 
-                                <form method="post" action="{{ url_for('other_tags', id_fiche=fiche['id_fiche']) }}" enctype="multipart/form-data">
-                                    <input class="sign" name="tags" placeholder="Modifier les tags ?" required>
-                                    <button type="submit" style="background-color: blue;">
-                                        <span class="material-symbols-outlined">update</span>
-                                    </button>
-                                </form>                                
-                                <div class="button-container">                              
-                                    <form action="accepterfiche/{{ fiche['id_fiche'] }}" method="GET">
-                                        <button type="submit" style="background-color:green;">
-                                            <span class="material-symbols-outlined">
-                                                check
-                                            </span>
+                                <div class="fiche_item">
+                                    <a>
+                                        <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
+                                    </a>                            
+                                    <a class="text">{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
+                                    <a class="text">Tags: {{ fiche['tags'] }}</a> 
+                                    <form method="post" action="{{ url_for('other_tags', id_fiche=fiche['id_fiche']) }}" enctype="multipart/form-data">
+                                        <input class="sign" name="tags" placeholder="Modifier les tags ?" required>
+                                        <button type="submit" style="background-color: blue;">
+                                            <span class="material-symbols-outlined">update</span>
                                         </button>
-                                    </form> 
-                                    <form action="supprimerfiche/{{ fiche['id_fiche'] }}" method="GET">
-                                        <button type="submit" style="background-color:red;">
-                                            <span class="material-symbols-outlined">
-                                                delete
-                                            </span>
-                                        </button>
-                                    </form> 
-                                </div> 
+                                    </form>                                
+                                    <div class="button-container">                              
+                                        <form action="accepterfiche/{{ fiche['id_fiche'] }}" method="GET">
+                                            <button type="submit" style="background-color:green;">
+                                                <span class="material-symbols-outlined">
+                                                    check
+                                                </span>
+                                            </button>
+                                        </form> 
+                                        <form action="supprimerfiche/{{ fiche['id_fiche'] }}" method="GET">
+                                            <button type="submit" style="background-color:red;">
+                                                <span class="material-symbols-outlined">
+                                                    delete
+                                                </span>
+                                            </button>
+                                        </form> 
+                                    </div> 
+                                </div>
                             {% else %}
                                 Pas d'image
                             {% endif %}

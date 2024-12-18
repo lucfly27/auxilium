@@ -14,11 +14,11 @@
         </div> 
         <div class="element">
             {% if signalements %}
+                <div class="container_fiche">
                 {% for signalement in signalements %}
-                    <div class="signalements">
-                        <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiche">                          
-                        <p class="text">Fiche signalée par {{ signalement['username'] }}</p>
-                        <p class="text">Message : {{ signalement['message'] }}</p>
+                    <div class="fiche_item">
+                        <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiches">                          
+                        <p class="text">Fiche signalée par {{ signalement['username'] }} <br> Message : {{ signalement['message'] }}</p>
                         <a href="{{ url_for('supprimerfiche', id_fiche=signalement['id_fiche']) }}">
                             <button type="button" class="button">
                                 <span class="material-symbols-outlined">
@@ -26,11 +26,12 @@
                                 </span>
                             </button>
                         </a>
-                        <form action="{{ url_for('ignorer_signalement', id_signalement=signalement['id_signalement']) }}" method="get">
+                        <a href="{{ url_for('ignorer_signalement', id_signalement=signalement['id_signalement']) }}">
                             <button type="button" class="button">Ignorer le signalement</button>
-                        </form>
+                        </a>
                     </div>
                 {% endfor %}
+                </div>
             {% else %}
                 <p class="text">Pas de signalements, tout va bien !</p>
             {% endif %}

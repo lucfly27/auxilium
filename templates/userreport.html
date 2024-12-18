@@ -14,16 +14,18 @@
             <p class="text">Si votre signalement n'apparaît pas, ne vous inquiétez pas, il a sûrement déjà été traité</p>
         </div>
         <div class="element">
-            {% if signalements %}
-                {% for signalement in signalements %}
-                    <div class="signalements">
-                        <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiche">                          
-                        <p class="text">Message : {{ signalement['message'] }}</p>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="text">Vous n'avez signalé aucune fiche ou vos fiches signalées ont été traitées</p>
-            {% endif %}
+                {% if signalements %}
+                    <div class="container_fiche">
+                    {% for signalement in signalements %}
+                        <div class="fiche_item">
+                            <img src="{{ url_for('static', filename=signalement['img_url']) }}" alt="{{ signalement['matiere'] }}" class="fiches">                          
+                            <p class="text">Message : {{ signalement['message'] }}</p>
+                        </div>
+                    {% endfor %}
+                    </div> 
+                {% else %}
+                    <p class="text">Vous n'avez signalé aucune fiche ou vos fiches signalées ont été traitées</p>
+                {% endif %}
         </div>
         <div class="element">
             <form action="{{ url_for('home') }}" method="get">
