@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Auxilium</title>
 </head>
 <body>
@@ -12,6 +12,23 @@
         <div class="head">
             <h1>Liste des Fiches</h1>  
         </div>
+        <button class="openbtn" id="openModalBtn" onclick="openModal()">
+            <span class="material-symbols-outlined">
+                filter_alt
+            </span>
+            Filtrer
+        </button>
+        {% if reset == 1 %}
+            <form action="{{ url_for('fiches') }}" method="get">
+                <button type="submit" class="openbtn" style="margin-top: 55px;"> 
+                    <span class="material-symbols-outlined">
+                        replay
+                    </span>
+                    Réinitialiser
+                </button>
+            </form>   
+        {% endif %}
+        </button>
         <div class="element">
             <div class="container_fiche">
                 {% for fiche in fiches %}
@@ -41,8 +58,76 @@
                 </button>
             </form>   
         </div>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Filtrer</h2>
+                <form method="POST" action="{{ url_for('sort') }}">
+                    <select class="sortselect" id="niveau-select" name="niveau" required onchange="updateMatieres()">
+                        <option value="">Sélectionner un niveau</option>
+                        {% for niveau in niveaux %}
+                            <option value="{{ niveau['id_niveau'] }}">{{ niveau['abreviation'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="sortselect" id="matiere-select" name="matiere" required>
+                        <option value="">Sélectionner une matière</option>
+                    </select>
+                    <button style="margin-top: 20px;" type="submit">Appliquer</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('modal')) {
+            openModal();  
+        }
+
+        document.querySelector('.close').addEventListener('click', closeModal);
+
+        document.getElementById('select').addEventListener('change', function() {
+        var niveauOption = this.querySelector('option[value=""]');
     
+        if (this.value !== "") {
+        niveauOption.disabled = true;
+        }
+        });
+
+        function updateMatieres() {
+            const niveauId = document.getElementById('niveau-select').value;
+            fetch(`/get-matieres?niveau_id=${niveauId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const matiereSelect = document.getElementById('matiere-select');
+                    matiereSelect.innerHTML = '<option value="">Sélectionner une matière</option>';
+                    data.matieres.forEach(matiere => {
+                        const option = document.createElement('option');
+                        option.value = matiere.id_matiere;
+                        option.textContent = matiere.nom;
+                        matiereSelect.appendChild(option);
+                    });
+                });
+        }
+    </script>
+
+
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}

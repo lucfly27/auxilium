@@ -581,9 +581,12 @@ def fiches():
             fiche.id_fiche;
     ''')
     fiches = cursor.fetchall() 
-    conn.close()
 
-    return render_template('fiches.html', fiches=fiches)
+    cursor.execute('SELECT id_niveau, abreviation FROM niveau')
+    niveaux = cursor.fetchall()
+
+    conn.close()
+    return render_template('fiches.html', fiches=fiches, niveaux=niveaux)
 
 @app.route('/fiches/<int:id_fiche>')
 def fiche_detail(id_fiche):
@@ -1002,6 +1005,46 @@ def removeadmin(id_utilisateur):
         flash("Cette utilisateur est pas admin")
     conn.close()
     return redirect(url_for('listuser'))
+
+@app.route('/sort', methods=['GET', 'POST'])
+def sort():
+    """
+    Permet de trier les fiches a l'aide d'un bouton dans la page de présentation des fiches
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    if request.method == 'POST':
+        niveau = request.form['niveau']
+        matiere = request.form['matiere']
+        print(niveau, matiere)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT 
+                fiche.id_fiche, 
+                matiere.nom, 
+                niveau.abreviation, 
+                fiche.img_url, 
+                GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+            FROM 
+                fiche
+            JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+            JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+            LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+            LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
+            WHERE 
+                niveau.id_niveau = ?
+            AND
+                matiere.id_matiere = ?
+            GROUP BY 
+                fiche.id_fiche;
+        ''', (niveau, matiere))
+        fiches = cursor.fetchall()
+
+        conn.close()
+        return render_template('fiches.html', fiches=fiches, reset=1)
+
 
 if __name__ == '__main__':
     init_db()
