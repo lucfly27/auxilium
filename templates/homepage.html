@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Auxilium</title>
+</head>
+<body>
+
+    <button class="openbtn" id="openModalBtn" onclick="openModal()">
+        <img src="{{ url_for('static', filename='user.png') }}" class="user" alt="Icon"> 
+        Compte
+    </button>
+
+    <div class="title">
+        <div class="element">
+            <h1> Bienvenue sur Auxilium </h1>
+        </div>
+        <div class="element">
+            <p class="text"> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
+        </div>
+        <div class="element">
+            <form action="{{ url_for('fiches') }}" method="get">
+                <button type="submit"> Explorer </button>
+            </form>  
+        </div>
+        <!-- <div class="cardbanner"></div> --> 
+     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Connexion</h2>
+            <form method="POST" action="{{ url_for('login') }}">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" name="username" required>
+                <label for="password">Mot de passe</label>
+                <input type="password" name="password" required>
+                
+            <div id="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-messages flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+                <p>Vous n'avez pas de compte ? <a href="/inscription" class="signin">Inscrivez-vous ici</a></p>
+                <button type="submit">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('modal')) {
+            openModal();  
+        }
+
+        document.querySelector('.close').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>

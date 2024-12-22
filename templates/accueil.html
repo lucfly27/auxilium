@@ -4,79 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Auxilium</title>
 </head>
 <body>
-
-    <button class="openbtn" id="openModalBtn" onclick="openModal()">
-        <img src="{{ url_for('static', filename='user.png') }}" class="user" alt="Icon"> 
-        Compte
-    </button>
-
     <div class="title">
         <div class="element">
-            <h1> Bienvenue sur Auxilium </h1>
+            <h1>Bienvenue sur Auxilium</h1>
         </div>
         <div class="element">
-            <p class="text"> Le site web de partage de fiches de révisions du lycée Lucie Aubrac à Bollène ! </p>
+            <form action="{{ url_for('search') }}" method="get"  class="search">
+                <input type="search" name="search" id="recherche" placeholder="Rechercher une fiche..." class="searchbar">
+                <button class="searchbtn">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </button>
+            </form>            
         </div>
         <div class="element">
             <form action="{{ url_for('fiches') }}" method="get">
-                <button type="submit"> Explorer </button>
-            </form>  
-        </div>
-        <!-- <div class="cardbanner"></div> --> 
-     </div>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Connexion</h2>
-            <form method="POST" action="{{ url_for('login') }}">
-                <label for="username">Nom d'utilisateur</label>
-                <input type="text" name="username" required>
-                <label for="password">Mot de passe</label>
-                <input type="password" name="password" required>
-                
-            <div id="flash-messages">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-messages flash-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </div>
-                <p>Vous n'avez pas de compte ? <a href="/inscription" class="signin">Inscrivez-vous ici</a></p>
-                <button type="submit">Se connecter</button>
+                <button type="submit" style="margin-top: 20px;"> Explorer </button>
             </form>
         </div>
     </div>
+    <form action="{{ url_for('addcard') }}" method="get">
+        <button type="submit" class="btn"> 
+            <span class="material-symbols-outlined">
+                add_circle
+            </span>    
+        </button>
+    </form>    
+    <button class="openbtn" onclick="openMenu()">
+        <img class="user" src="{{ url_for('static', filename='user.png') }}" alt="Icon"> 
+        {{ username }}
+    </button>
+      
+    <div id="menuDeroulant" class="menu-deroulant">
+        <img src="{{ url_for('static', filename='user.png')}}" class="usermd" alt ="Icon">
+        <img src="{{ url_for('static', filename='close.png')}}" class="closebtn" onclick="closeMenu()" alt="Close" style="cursor: pointer;">
+        <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
+        <a href="#" onclick="openModal()">Credits</a>
+        <a href="{{ url_for('userrequest') }}">Vos fiches</a>
+        <a href="{{ url_for('userreport') }}">Vos signalements</a>
+        {% if perm %}
+            <a href="{{ url_for('checkrequest') }}"">Ajout fiches</a>
+            <a href="{{ url_for('checkreport') }}">Signalements</a>
+            <a href="{{ url_for('listuser') }}">Utilisateurs</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Deconnexion</a>
+    </div>
+
+    <div id="modal" class="credit_modal">
+        <div class="credit-modal-content">
+            <a href="https://github.com/lucfly27">
+                <img src="{{ url_for('static', filename='logo_lj.png') }}" class="user" alt="Icon">
+            </a>
+            <span class="close">&times;</span>
+            <h3 class="text"> Credits: </h3>
+            <p class="text"> Dev: Luccas Garcia-Aubert </p>
+            <p class="text"> Superviseur: Mr. Falques </p>
+            <a class="text" href="https://github.com/lucfly27/auxilium">Github du projet</a>
+        </div>
+    </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <script>
+              alert("{{ message }}");
+          </script>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
     <script>
+        /* Menu deroulant: */
+        function openMenu() {
+            document.getElementById("menuDeroulant").style.width = "200px";
+        }
+    
+        function closeMenu() {
+            document.getElementById("menuDeroulant").style.width = "0";
+        }
+
+        /* Modal credits: */
         function openModal() {
             document.getElementById('modal').style.display = 'block';
         }
-
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
-
         window.onclick = function(event) {
             var modal = document.getElementById('modal');
             if (event.target == modal) {
                 closeModal();
             }
         }
-
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('modal')) {
             openModal();  
         }
-
         document.querySelector('.close').addEventListener('click', closeModal);
     </script>
+
 </body>
 </html>

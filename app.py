@@ -92,8 +92,8 @@ def get_db_connection():
     return conn
 
 @app.route('/')
-def accueil():
-    return render_template('accueil.html')
+def homepage():
+    return render_template('homepage.html')
 
 def init_db():
     """
@@ -217,16 +217,16 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['username'] = username
             print(username, "vient de se connecter")
-            return redirect(url_for('home'))
+            return redirect(url_for('accueil'))
         else:
             flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
-            return redirect(url_for('accueil', modal=True))
+            return redirect(url_for('homepage', modal=True))
         conn.close()
     
-    return redirect(url_for('accueil', modal=True))
+    return redirect(url_for('homepage', modal=True))
 
-@app.route('/home')
-def home():
+@app.route('/accueil')
+def accueil():
     """
     Affiche la page d'accueil
     """
@@ -236,7 +236,7 @@ def home():
     
     username = session['username']
     perm = check_admin(username)
-    return render_template('home.html', username=username, perm=perm)
+    return render_template('accueil.html', username=username, perm=perm)
 
 @app.route('/logout')
 def logout():
@@ -244,7 +244,7 @@ def logout():
         username = session['username']
         session.pop('username', None)
         print(username, "vient de se deconnecter")
-    return redirect(url_for('accueil'))
+    return redirect(url_for('homepage'))
 
 @app.route('/inscription', methods=['GET', 'POST'])
 def inscription():
@@ -264,7 +264,7 @@ def inscription():
                            (username, email, password, 0))
             conn.commit()  
             print(f'Compte créé avec succès pour {username}!')
-            return redirect(url_for('home'))
+            return redirect(url_for('accueil'))
         except sqlite3.IntegrityError:
             flash('Cet utilisateur ou cet email existe déjà', 'error')
         finally:
@@ -281,7 +281,7 @@ def supprimerutilisateur(id_user):
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
     elif not check_admin(session['username']):
-        return redirect(url_for('home'))
+        return redirect(url_for('accueil'))
     else:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -526,7 +526,7 @@ def supprimerfiche(id_fiche):
 
         conn.close()
 
-        return redirect(url_for('home'))
+        return redirect(url_for('accueil'))
 
 @app.route('/othertag/<int:id_fiche>', methods=['GET', 'POST'])
 def other_tags(id_fiche):
@@ -761,7 +761,7 @@ def search():
     search = request.args.get('search')
     search = transformer_chaine(search)
     if not search:
-        return redirect(url_for('home'))
+        return redirect(url_for('accueil'))
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -845,7 +845,7 @@ def search():
         if not id_tag:
             flash('Aucun résultat trouvé pour cette recherche.', 'info')
             conn.close()
-            return redirect(url_for('home'))
+            return redirect(url_for('accueil'))
 
     cursor.execute('''
         SELECT 
