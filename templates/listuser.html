@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Auxilium</title>
 </head>
 <body>
@@ -20,6 +20,7 @@
                     <th>Username</th>
                     <th>Email</th>
                     <th>Droits admin</th>
+                    <th>Supprimer utilisateur</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -32,13 +33,30 @@
                         <td>
                         {% if utilisateur['admin_perm'] == 1 %}
                           <form action="/removeadmin/{{ utilisateur['id_utilisateur'] }}" method="GET">
-                            <button type="submit" class="button">Enlever les droits</button>
+                            <button type="submit" class="button">
+                              <span class="material-symbols-outlined">
+                                remove
+                              </span>
+                            </button>
                           </form>                         
                         {% elif utilisateur['admin_perm'] == 0 %}
                           <form action="/addadmin/{{ utilisateur['id_utilisateur'] }}" method="GET">
-                            <button type="submit" class="button">Ajouter les droits</button>
+                            <button type="submit" class="button">
+                              <span class="material-symbols-outlined">
+                                add
+                              </span>
+                            </button>
                           </form>                        
                         {% endif %}
+                        </td>
+                        <td>
+                          <form action="/supprimerutilisateur/{{ utilisateur['id_utilisateur'] }}" method="GET">
+                            <button type="submit" class="button">
+                                <span class="material-symbols-outlined">
+                                  delete
+                                </span>
+                            </button>
+                          </form> 
                         </td>
                       </tr>
                     {% endif %}

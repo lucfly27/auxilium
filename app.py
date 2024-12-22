@@ -272,6 +272,42 @@ def inscription():
 
     return render_template('inscription.html')
 
+@app.route('/supprimerutilisateur/<int:id_user>')
+def supprimerutilisateur(id_user):
+    """
+    Supprime un utilisateurs avec son id et remet à jour tous les id
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    elif not check_admin(session['username']):
+        return redirect(url_for('home'))
+    else:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT * FROM utilisateurs WHERE id_utilisateur = ?', (id_user,))
+        exist = cursor.fetchall()
+
+        if exist:
+            cursor.execute('DELETE FROM utilisateurs WHERE id_utilisateur = ?', (id_user,))
+            cursor.execute('''
+                UPDATE utilisateurs
+                SET id_utilisateur = id_utilisateur - 1
+                WHERE id_utilisateur > ?;
+            ''', (id_user,))
+            cursor.execute("DELETE FROM sqlite_sequence WHERE name='utilisateurs';")
+            flash('Utilisateur supprimée avec succés !', 'succes')
+            print(f'Utilisateur id={id_user} supprimée')
+        else:
+            flash('Utilisateur introuvable', 'error')
+
+
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('listuser'))
+
 @app.route('/get-matieres')
 def get_matieres():
     """
