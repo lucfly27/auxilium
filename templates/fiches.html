@@ -38,7 +38,13 @@
                                 <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
                             </a>
                             <div class="text">
-                                <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>Tags: {{ fiche['tags'] }}</p>
+                                <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>
+                                    {% if fiche['tags'] %}
+                                        Tags: {{ fiche['tags'] }}
+                                    {% else %}
+                                        Aucun tags pour cette fiche
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
                     {% else %}
