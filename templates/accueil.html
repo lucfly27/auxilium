@@ -8,6 +8,50 @@
     <title>Auxilium</title>
 </head>
 <body>
+    <nav>
+        <div class="logo">
+            <span class="material-symbols-outlined">
+                account_circle
+            </span>
+            <p>{{ username }}</p>
+        </div>
+        <ul>
+          <li>
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#">Services</a>
+          </li>
+          <li>
+            <a href="#">Blog</a>
+          </li>
+          <li>
+            <a href="#">Contact Us</a>
+          </li>
+        </ul>
+        <div class="hamburger">
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+        </div>
+      </nav>
+      <div class="menubar">
+        <ul>
+          <li>
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#">Services</a>
+          </li>
+          <li>
+            <a href="#">Blog</a>
+          </li>
+          <li>
+            <a href="#">Contact Us</a>
+          </li>
+        </ul>
+      </div>
+
     <div class="title">
         <div class="element">
             <h1>Bienvenue sur Auxilium</h1>
@@ -35,10 +79,6 @@
             </span>    
         </button>
     </form>    
-    <button class="openbtn" onclick="openMenu()">
-        <img class="user" src="{{ url_for('static', filename='user.png') }}" alt="Icon"> 
-        {{ username }}
-    </button>
       
     <div id="menuDeroulant" class="menu-deroulant">
         <img src="{{ url_for('static', filename='user.png')}}" class="usermd" alt ="Icon">
@@ -106,6 +146,15 @@
             openModal();  
         }
         document.querySelector('.close').addEventListener('click', closeModal);
+
+        const mobileNav = document.querySelector(".hamburger");
+        const navbar = document.querySelector(".menubar");
+
+        const toggleNav = () => {
+        navbar.classList.toggle("active");
+        mobileNav.classList.toggle("hamburger-active");
+        };
+        mobileNav.addEventListener("click", () => toggleNav());
     </script>
 
 </body>
