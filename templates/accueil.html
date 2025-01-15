@@ -13,20 +13,34 @@
             <span class="material-symbols-outlined">
                 account_circle
             </span>
-            <p>{{ username }}</p>
+            <p>{{ username }}</p>  
         </div>
         <ul>
+          {% if perm %}
+            <li>
+              <a href="{{ url_for('checkrequest') }}"">Ajout fiches</a>
+            </li>
+            <li>
+              <a href="{{ url_for('checkreport') }}">Signalements</a>
+            </li>
+            <li>
+              <a href="{{ url_for('listuser') }}">Utilisateurs</a>
+            </li>
+          {% endif %}
           <li>
-            <a href="#">Home</a>
+            <a href="{{ url_for('userrequest') }}">Vos fiches</a>
           </li>
           <li>
-            <a href="#">Services</a>
+            <a href="{{ url_for('userreport') }}">Vos signalements</a>
           </li>
           <li>
-            <a href="#">Blog</a>
+            <a href="#" onclick="openModal()">Credits</a>
           </li>
           <li>
-            <a href="#">Contact Us</a>
+            <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
+          </li>
+          <li>
+            <a href="{{ url_for('logout') }}">Deconnexion</a>  
           </li>
         </ul>
         <div class="hamburger">
@@ -37,17 +51,31 @@
       </nav>
       <div class="menubar">
         <ul>
+          {% if perm %}
+              <li>
+                <a href="{{ url_for('checkrequest') }}"">Ajouts fiches</a>
+              </li>
+              <li>
+                <a href="{{ url_for('checkreport') }}">Signalements</a>
+              </li>
+              <li>
+                <a href="{{ url_for('listuser') }}"> Utilisateurs</a>
+              </li>
+          {% endif %}
           <li>
-            <a href="#">Home</a>
+            <a href="{{ url_for('userrequest') }}">Vos fiches</a>
           </li>
           <li>
-            <a href="#">Services</a>
+            <a href="{{ url_for('userreport') }}">Vos signalements</a>
           </li>
           <li>
-            <a href="#">Blog</a>
+            <a href="#" onclick="openModal()">Credits</a>
           </li>
           <li>
-            <a href="#">Contact Us</a>
+            <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
+          </li>
+          <li>
+            <a href="{{ url_for('logout') }}">Deconnexion</a>  
           </li>
         </ul>
       </div>
@@ -79,21 +107,6 @@
             </span>    
         </button>
     </form>    
-      
-    <div id="menuDeroulant" class="menu-deroulant">
-        <img src="{{ url_for('static', filename='user.png')}}" class="usermd" alt ="Icon">
-        <img src="{{ url_for('static', filename='close.png')}}" class="closebtn" onclick="closeMenu()" alt="Close" style="cursor: pointer;">
-        <a href="mailto:luccas3684@gmail.com?subject=Auxilium">Contact</a>
-        <a href="#" onclick="openModal()">Credits</a>
-        <a href="{{ url_for('userrequest') }}">Vos fiches</a>
-        <a href="{{ url_for('userreport') }}">Vos signalements</a>
-        {% if perm %}
-            <a href="{{ url_for('checkrequest') }}"">Ajout fiches</a>
-            <a href="{{ url_for('checkreport') }}">Signalements</a>
-            <a href="{{ url_for('listuser') }}">Utilisateurs</a>
-        {% endif %}
-        <a href="{{ url_for('logout') }}">Deconnexion</a>
-    </div>
 
     <div id="modal" class="credit_modal">
         <div class="credit-modal-content">
@@ -119,15 +132,6 @@
   {% endwith %}
 
     <script>
-        /* Menu deroulant: */
-        function openMenu() {
-            document.getElementById("menuDeroulant").style.width = "200px";
-        }
-    
-        function closeMenu() {
-            document.getElementById("menuDeroulant").style.width = "0";
-        }
-
         /* Modal credits: */
         function openModal() {
             document.getElementById('modal').style.display = 'block';
@@ -147,6 +151,7 @@
         }
         document.querySelector('.close').addEventListener('click', closeModal);
 
+        /* navbar */
         const mobileNav = document.querySelector(".hamburger");
         const navbar = document.querySelector(".menubar");
 
