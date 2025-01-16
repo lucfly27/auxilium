@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <title>Auxilium</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <div class="center">
         <div class="head">
             <h1 class="text">Fiches signalées :</h1> 
@@ -46,7 +39,7 @@
             </form>   
         </div>
     </div>
-    
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -56,5 +49,4 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-</body>
-</html>
+{% endblock %}

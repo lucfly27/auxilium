@@ -234,9 +234,7 @@ def accueil():
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
     
-    username = session['username']
-    perm = check_admin(username)
-    return render_template('accueil.html', username=username, perm=perm)
+    return render_template('accueil.html', username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/logout')
 def logout():
@@ -270,7 +268,7 @@ def inscription():
         finally:
             conn.close()
 
-    return render_template('inscription.html')
+    return render_template('inscription.html', username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/supprimerutilisateur/<int:id_user>')
 def supprimerutilisateur(id_user):
@@ -411,7 +409,7 @@ def addcard():
     cursor.execute('SELECT id_niveau, abreviation FROM niveau')
     niveaux = cursor.fetchall()
     conn.close()
-    return render_template('addcard.html', niveaux=niveaux)
+    return render_template('addcard.html', niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/checkrequest')
 def checkrequest():
@@ -448,7 +446,7 @@ def checkrequest():
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('checkrequest.html', fiches=fiches)
+    return render_template('checkrequest.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/accepterfiche/<int:id_fiche>')
 def accepterfiche(id_fiche):
@@ -622,7 +620,7 @@ def fiches():
     niveaux = cursor.fetchall()
 
     conn.close()
-    return render_template('fiches.html', fiches=fiches, niveaux=niveaux)
+    return render_template('fiches.html', fiches=fiches, niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/fiches/<int:id_fiche>')
 def fiche_detail(id_fiche):
@@ -660,7 +658,7 @@ def fiche_detail(id_fiche):
         flash("Fiche non trouvée", 'error')
         return redirect(url_for('fiches'))
 
-    return render_template('fiche.html', fiche=fiche) 
+    return render_template('fiche.html', fiche=fiche, username=session['username'], perm=check_admin(session['username'])) 
 
 @app.route('/signaler', methods=['GET', 'POST'])
 def signaler():
@@ -698,7 +696,7 @@ def signaler():
     username = session['username']
     print(f"{username} vient de signaler une fiche")
 
-    return redirect(url_for('fiches', id_fiche = id_fiche))
+    return redirect(url_for('fiches', id_fiche = id_fiche, username=session['username'], perm=check_admin(session['username'])))
 
 @app.route('/checkreport')
 def checkreport():
@@ -723,7 +721,7 @@ def checkreport():
     signalements = cursor.fetchall()
     conn.close()
 
-    return render_template('checkreport.html', signalements=signalements)
+    return render_template('checkreport.html', signalements=signalements, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/skipreport/<int:id_signalement>')
 def ignorer_signalement(id_signalement):
@@ -795,7 +793,7 @@ def search():
             fiches = cursor.fetchall()
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches)
+            return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
 
     for niveau, abreviation, nom in matieres:
         abv_init = abreviation
@@ -834,7 +832,7 @@ def search():
             
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches)
+            return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
 
     cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (search,))
     id_tag = cursor.fetchone()
@@ -870,7 +868,7 @@ def search():
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('fiches.html', fiches=fiches)
+    return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/userrequest')
 def userrequest():
@@ -908,7 +906,7 @@ def userrequest():
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('userrequest.html', fiches=fiches)
+    return render_template('userrequest.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/userreport')
 def userreport():
@@ -941,7 +939,7 @@ def userreport():
     signalements = cursor.fetchall()
     conn.close()
 
-    return render_template('userreport.html', signalements=signalements)
+    return render_template('userreport.html', signalements=signalements, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/listuser')
 def listuser():
@@ -970,7 +968,7 @@ def listuser():
     utilisateurs = cursor.fetchall() 
     conn.close()
 
-    return render_template('listuser.html', utilisateurs=utilisateurs)   
+    return render_template('listuser.html', utilisateurs=utilisateurs, username=session['username'], perm=check_admin(session['username']))   
 
 @app.route('/addadmin/<int:id_utilisateur>')
 def addadmin(id_utilisateur):
@@ -1079,7 +1077,7 @@ def sort():
         fiches = cursor.fetchall()
 
         conn.close()
-        return render_template('fiches.html', fiches=fiches, reset=1)
+        return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
 
 
 if __name__ == '__main__':

@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" />
-    <title>Auxilium</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <div class="center">
         <div class="element">
             <h1>Fiche: {{ fiche['nom'] }}, {{ fiche['abreviation'] }}</h1>
@@ -54,7 +47,7 @@
             </form>   
         </div>
     </div>
-</body>
+
 <script>
     function openModal() {
         document.getElementById('modal').style.display = 'block';
@@ -78,4 +71,4 @@
 
     document.querySelector('.close').addEventListener('click', closeModal);
 </script>
-</html>
+{% endblock %}
