@@ -11,10 +11,10 @@
             <a href="{{ url_for('static', filename=fiche['img_url']) }}" download="fiche_Auxilium.png" style="text-decoration: none; color: inherit;">
                 <button>Télécharger</button>
             </a>            
-            <button id="openModalBtn" onclick="openModal()">
+            <button id="openModalBtn" onclick="openreportModal()">
                 Signaler
             </button>
-            <div id="modal" class="modal">
+            <div id="reportmodal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <h2>Signaler</h2>
@@ -49,26 +49,26 @@
     </div>
 
 <script>
-    function openModal() {
-        document.getElementById('modal').style.display = 'block';
+    function openreportModal() {
+        document.getElementById('reportmodal').style.display = 'block';
     }
 
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
+    function closereportModal() {
+        document.getElementById('reportmodal').style.display = 'none';
     }
 
     window.onclick = function(event) {
-        var modal = document.getElementById('modal');
-        if (event.target == modal) {
-            closeModal();
+        var reportmodal = document.getElementById('reportmodal');
+        if (event.target == reportmodal) {
+            closereportModal();
         }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('modal')) {
-        openModal();  
+    if (urlParams.has('reportmodal')) {
+        openreportModal();  
     }
 
-    document.querySelector('.close').addEventListener('click', closeModal);
+    document.querySelector('.close').addEventListener('click', closereportModal);
 </script>
 {% endblock %}

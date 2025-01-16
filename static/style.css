@@ -474,12 +474,12 @@ input {
 .openbtn {
     font-size: 20px;
     cursor: pointer;
-    background-color: #fcafe9;
+    background-color: #92dce5;
     color: white;
     padding: 10px 15px;
     border: none;
     position: absolute;
-    top: 20px;
+    top: 70px;
     right: 20px;
 }
 

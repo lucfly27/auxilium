@@ -5,7 +5,7 @@
         <div class="head">
             <h1>Liste des Fiches</h1>  
         </div>
-        <button class="openbtn" id="openModalBtn" onclick="openModal()">
+        <button class="openbtn" id="openfilterModalBtn" onclick="openfilterModal()">
             <span class="material-symbols-outlined">
                 filter_alt
             </span>
@@ -13,7 +13,7 @@
         </button>
         {% if reset == 1 %}
             <form action="{{ url_for('fiches') }}" method="get">
-                <button type="submit" class="openbtn" style="margin-top: 55px;"> 
+                <button type="submit" class="openbtn" style="margin-top: 85px;"> 
                     <span class="material-symbols-outlined">
                         replay
                     </span>
@@ -57,7 +57,7 @@
                 </button>
             </form>   
         </div>
-        <div id="modal" class="modal">
+        <div id="filtermodal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Filtrer</h2>
@@ -78,27 +78,27 @@
     </div>
 
     <script>
-        function openModal() {
-            document.getElementById('modal').style.display = 'block';
+        function openfilterModal() {
+            document.getElementById('filtermodal').style.display = 'block';
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+        function closefilterModal() {
+            document.getElementById('filtermodal').style.display = 'none';
         }
 
         window.onclick = function(event) {
-            var modal = document.getElementById('modal');
-            if (event.target == modal) {
-                closeModal();
+            var filtermodal = document.getElementById('filtermodal');
+            if (event.target == filtermodal) {
+                closefilterModal();
             }
         }
 
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('modal')) {
-            openModal();  
+        if (urlParams.has('filtermodal')) {
+            openfilterModal();  
         }
 
-        document.querySelector('.close').addEventListener('click', closeModal);
+        document.querySelector('.close').addEventListener('click', closefilterModal);
 
         document.getElementById('select').addEventListener('change', function() {
         var niveauOption = this.querySelector('option[value=""]');
