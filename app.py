@@ -793,7 +793,7 @@ def search():
             fiches = cursor.fetchall()
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
+            return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
 
     for niveau, abreviation, nom in matieres:
         abv_init = abreviation
@@ -832,7 +832,7 @@ def search():
             
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
+            return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
 
     cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (search,))
     id_tag = cursor.fetchone()
@@ -868,7 +868,7 @@ def search():
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('fiches.html', fiches=fiches, username=session['username'], perm=check_admin(session['username']))
+    return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/userrequest')
 def userrequest():
