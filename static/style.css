@@ -443,6 +443,37 @@ input {
     cursor: pointer;
 }
 
+.filterclose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.filterclose:hover,
+.filterclose:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.reportclose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reportclose:hover,
+.reportclose:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
 .flash-messages {
     margin: 8px;
     text-align: center;
@@ -481,6 +512,18 @@ input {
     position: absolute;
     top: 70px;
     right: 20px;
+}
+
+.returnbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #92dce5;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: absolute;
+    top: 70px;
+    left: 20px;
 }
 
 .user {

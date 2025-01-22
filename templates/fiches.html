@@ -13,7 +13,7 @@
         </button>
         {% if reset == 1 %}
             <form action="{{ url_for('fiches') }}" method="get">
-                <button type="submit" class="openbtn" style="margin-top: 85px;"> 
+                <button type="submit" class="openbtn" style="margin-top: 55px;"> 
                     <span class="material-symbols-outlined">
                         replay
                     </span>
@@ -59,7 +59,7 @@
         </div>
         <div id="filtermodal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="filterclose">&times;</span>
                 <h2>Filtrer</h2>
                 <form method="POST" action="{{ url_for('sort') }}">
                     <select class="sortselect" id="niveau-select" name="niveau" required onchange="updateMatieres()">
@@ -98,7 +98,7 @@
             openfilterModal();  
         }
 
-        document.querySelector('.close').addEventListener('click', closefilterModal);
+        document.querySelector('.filterclose').addEventListener('click', closefilterModal);
 
         document.getElementById('select').addEventListener('change', function() {
         var niveauOption = this.querySelector('option[value=""]');
