@@ -163,6 +163,14 @@ def init_db():
         );
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS favoris (
+            id_favori INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_utilisateur INT NOT NULL,
+            id_fiche INT NOT NULL
+        );
+    ''')
+
 
     cursor.execute('SELECT COUNT(*) FROM niveau WHERE abreviation = ? AND nom = ?', ('2nd', 'seconde'))
     exist = cursor.fetchone()[0]
@@ -268,7 +276,7 @@ def inscription():
         finally:
             conn.close()
 
-    return render_template('inscription.html', username=session['username'], perm=check_admin(session['username']))
+    return render_template('inscription.html')
 
 @app.route('/supprimerutilisateur/<int:id_user>')
 def supprimerutilisateur(id_user):
@@ -1000,6 +1008,7 @@ def addadmin(id_utilisateur):
         ''', (id_utilisateur,))
         conn.commit()
         flash("Permission administrateur ajoutée")
+        print(f"Utilisateurs id={id_utilisateur}, username={session['username']} est maintenant admin")
     else:
         flash("Cette utilisateur est deja admin")
     conn.close()
@@ -1035,6 +1044,7 @@ def removeadmin(id_utilisateur):
         ''', (id_utilisateur,))
         conn.commit()
         flash("Permission administrateur retirée")
+        print(f"Utilisateurs id={id_utilisateur}, username={session['username']} n'est maintenant plus admin")
     else:
         flash("Cette utilisateur est pas admin")
     conn.close()
@@ -1051,7 +1061,6 @@ def sort():
     if request.method == 'POST':
         niveau = request.form['niveau']
         matiere = request.form['matiere']
-        print(niveau, matiere)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
@@ -1079,6 +1088,69 @@ def sort():
         conn.close()
         return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
 
+@app.route('/addfavorite/<int:id_fiche>')
+def addfavorite(id_fiche):
+    '''
+    Permet d'ajouter une fiche au favori
+    '''
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    username = session['username']
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?;', (username,))
+    id_user = cursor.fetchone()[0]
+    cursor.execute(
+        'INSERT INTO favoris (id_utilisateur, id_fiche) VALUES (?, ?)',
+        (id_user, id_fiche,)
+    )
+    conn.commit()
+    conn.close()
+    flash('Fiche ajoutée au favori !')
+    print(f"Utilisateur id={id_user}, username={username} à maintenant la fiche id={id_fiche} en favori")
+    return redirect(url_for('fiches'))
+
+@app.route('/removefavorite/<int:id_fiche>')
+def removefavorite(id_fiche):
+    '''
+    Permet de retirer une fiche de ses favoris
+    '''
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    username = session['username']
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?;', (username,))
+    id_user = cursor.fetchone()[0]
+    cursor.execute('''
+    SELECT 
+        id_favori 
+    FROM 
+        favoris 
+    WHERE 
+        id_utilisateur = ?
+    AND 
+        id_fiche = ?
+    ''', (id_user, id_fiche,))
+    try:
+        id_favori = cursor.fetchone()[0]
+    except TypeError:
+        flash("Vos favoris ne contiennent pas cette fiches")
+        return redirect(url_for('fiches'))
+    cursor.execute('DELETE FROM favoris WHERE id_favori = ?', (id_favori,))
+    cursor.execute('''
+        UPDATE favoris
+        SET id_favori = id_favori - 1
+        WHERE id_favori > ?;
+    ''', (id_favori,))
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='favoris';")
+    conn.commit()
+    conn.close()
+    flash('Fiche retirée des favoris !')
+    print(f"Utilisateur id={id_user}, username={username} à enlevée la fiche id={id_fiche} de ses favoris")
+    return redirect(url_for('fiches'))
 
 if __name__ == '__main__':
     init_db()
