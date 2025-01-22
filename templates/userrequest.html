@@ -12,7 +12,14 @@
                             {% if fiche['img_url'] %}
                                 <div class="fiche_item">
                                     <div class="element">
-                                        <p class="text">Fiche: {{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br> Tags : {{ fiche['tags'] }}</p>
+                                        <p class="text">Fiche: {{ fiche['nom'] }}, {{ fiche['abreviation'] }} 
+                                        <br> 
+                                            {% if fiche['tags'] %}
+                                                Tags: {{ fiche['tags'] }}
+                                            {% else %}
+                                                Aucun tags pour cette fiche
+                                            {% endif %}
+                                        </p>
                                     </div>
                                     <div class="element">
                                         <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiches">
