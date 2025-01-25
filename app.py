@@ -1098,6 +1098,12 @@ def addfavorite(id_fiche):
         return redirect(url_for('login', modal=True))
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute('SELECT * FROM fiche WHERE id_fiche = ?;', (id_fiche,))
+    exist = cursor.fetchone()
+    if not exist:
+        conn.close()
+        flash('Aucune fiche avec cette id')
+        return redirect(url_for('fiches'))
     username = session['username']
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?;', (username,))
     id_user = cursor.fetchone()[0]
@@ -1124,6 +1130,12 @@ def removefavorite(id_fiche):
     username = session['username']
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?;', (username,))
     id_user = cursor.fetchone()[0]
+    cursor.execute('SELECT * FROM favoris WHERE id_fiche = ? AND id_utilisateur = ?;', (id_fiche, id_user,))
+    exist = cursor.fetchone()
+    if not exist:
+        conn.close()
+        flash('Vos favoris ne contienne pas cette fiche')
+        return redirect(url_for('fiches'))
     cursor.execute('''
     SELECT 
         id_favori 
