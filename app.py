@@ -1107,6 +1107,12 @@ def addfavorite(id_fiche):
     username = session['username']
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?;', (username,))
     id_user = cursor.fetchone()[0]
+    cursor.execute('SELECT * FROM favoris WHERE id_fiche = ? AND id_utilisateur = ?;', (id_fiche, id_user,))
+    exist = cursor.fetchone()
+    if exist:
+        conn.close()
+        flash('Fiche déja en favoris')
+        return redirect(url_for('fiches'))
     cursor.execute(
         'INSERT INTO favoris (id_utilisateur, id_fiche) VALUES (?, ?)',
         (id_user, id_fiche,)
