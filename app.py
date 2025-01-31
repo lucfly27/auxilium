@@ -226,8 +226,11 @@ def login():
             session['username'] = username
             print(username, "vient de se connecter")
             return redirect(url_for('accueil'))
-        else:
+        elif user:
             flash('Nom d\'utilisateur ou mot de passe incorrect', 'error')
+            return redirect(url_for('homepage', modal=True))
+        else:
+            flash('Nom d\'utilisateur non existant', 'error')
             return redirect(url_for('homepage', modal=True))
         conn.close()
     
