@@ -182,6 +182,25 @@
         text-align: left;
         color: #7d7c7d;
     } 
+
+    .sortselect {
+        width: 280px;
+        height: 30px;
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: right;
+        align-items: right;
+        background-color: #92dce5;
+        border-style: none;
+        margin-top: 5px;
+        border: 1px solid #7d7c7d;
+        border-radius: 5px;
+    }
+
+    .filterdiv button{
+        margin-top: 100px;
+    }
 }
 
 /* pour ecran ordi/tablette */
@@ -356,7 +375,21 @@
         padding: 10px;
         text-align: left;
         color: #7d7c7d;
-    }    
+    }   
+    .sortselect {
+        width: 300px;
+        height: 30px;
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: right;
+        align-items: right;
+        background-color: #92dce5;
+        border-style: none;
+        margin-top: 5px;
+        border: 1px solid #7d7c7d;
+        border-radius: 5px;
+    } 
 }
 
 body {
@@ -514,6 +547,18 @@ input {
     right: 20px;
 }
 
+.resetbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #92dce5;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    position: absolute;
+    top: 120px;
+    right: 20px;
+}
+
 .returnbtn {
     font-size: 20px;
     cursor: pointer;
@@ -599,21 +644,6 @@ input {
     font-size: 30px;
     cursor: pointer;
     z-index: 0;
-}
-
-.sortselect {
-    width: 300px;
-    height: 30px;
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: right;
-    align-items: right;
-    background-color: #92dce5;
-    border-style: none;
-    margin-top: 5px;
-    border: 1px solid #7d7c7d;
-    border-radius: 5px;
 }
 
 nav {
