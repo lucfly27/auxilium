@@ -1,3 +1,3 @@
 # auxilium
 
-A help website for students
+A local help website for students
