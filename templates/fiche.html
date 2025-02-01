@@ -86,5 +86,40 @@
     }
 
     document.querySelector('.reportclose').addEventListener('click', closereportModal);
+
+      /* navbar */
+  const mobileNav = document.querySelector(".hamburger");
+  const navbar = document.querySelector(".menubar");
+
+  const toggleNav = () => {
+  navbar.classList.toggle("active");
+  mobileNav.classList.toggle("hamburger-active");
+  };
+  mobileNav.addEventListener("click", () => toggleNav());
+
+  /* Modal credits: */
+  function openModal() {
+      document.getElementById('modal').style.display = 'block';
+      /* fermeture de la nav bar si c'est un ecran telephone et si elle est ouverte */
+      if (window.innerWidth <= 768 && navbar.classList.contains("active")) {
+        navbar.classList.remove("active");
+        mobileNav.classList.remove("hamburger-active");
+  }
+  }
+  function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+  }
+  window.onclick = function(event) {
+      var modal = document.getElementById('modal');
+      if (event.target == modal) {
+          closeModal();
+      }
+  }
+  const urlParams2 = new URLSearchParams(window.location.search);
+  if (urlParams2.has('modal')) {
+      openModal();  
+  }
+  document.querySelector('.close').addEventListener('click', closeModal);
+
 </script>
 {% endblock %}

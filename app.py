@@ -1173,6 +1173,42 @@ def removefavorite(id_fiche):
     print(f"Utilisateur id={id_user}, username={username} à enlevée la fiche id={id_fiche} de ses favoris")
     return redirect(url_for('fiches'))
 
+@app.route('/favorite')
+def favorite():
+    """
+    Permet de voir ses favoris
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?', (session['username'],))
+    id_user = cursor.fetchone()[0]
+    cursor.execute('''
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url, 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            favoris
+        JOIN fiche ON fiche.id_fiche = favoris.id_fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            favoris.id_utilisateur = ?
+        GROUP BY 
+            favoris.id_favori;
+    ''', (id_user,))
+    fiches = cursor.fetchall() 
+
+    conn.close()
+    return render_template('favorite.html', fiches=fiches, niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
+
 if __name__ == '__main__':
     init_db()
     host_ip = '' #for set an host ip

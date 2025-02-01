@@ -28,6 +28,9 @@
         </li>
       {% endif %}
       <li>
+        <a href="{{ url_for('favorite') }}">Vos favoris</a>
+      </li>
+      <li>
         <a href="{{ url_for('userrequest') }}">Vos fiches</a>
       </li>
       <li>
@@ -62,6 +65,9 @@
             <a href="{{ url_for('listuser') }}"> Utilisateurs</a>
           </li>
       {% endif %}
+      <li>
+        <a href="{{ url_for('favorite') }}">Vos favoris</a>
+      </li>
       <li>
         <a href="{{ url_for('userrequest') }}">Vos fiches</a>
       </li>

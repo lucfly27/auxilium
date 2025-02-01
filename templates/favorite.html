@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="center">
+        <div class="head">
+            <h1>Vos fiches favorites</h1>  
+        </div>
+        <div class="filterdiv">
+            <button class="openbtn" id="openfilterModalBtn" onclick="openfilterModal()">
+                <span class="material-symbols-outlined">
+                    filter_alt
+                </span>
+                Filtrer
+            </button>
+            {% if reset == 1 %}
+                <form action="{{ url_for('fiches') }}" method="get">
+                    <button type="submit" class="resetbtn"> 
+                        <span class="material-symbols-outlined">
+                            replay
+                        </span>
+                        Réinitialiser
+                    </button>
+                </form>   
+            {% endif %}
+            </button>
+        </div>
+        <div class="element">
+            <div class="container_fiche">
+                {% for fiche in fiches %}
+                    {% if fiche['img_url'] %}
+                        <div class="fiche_item">
+                            <a href="/fiches/{{ fiche['id_fiche'] }}">
+                                <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
+                            </a>
+                            <div class="text">
+                                <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>
+                                    {% if fiche['tags'] %}
+                                        Tags: {{ fiche['tags'] }}
+                                    {% else %}
+                                        Aucun tags pour cette fiche
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="fiche_item">
+                            <p>Pas d'image</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>            
+        </div>
+        <div class="element">
+            <form action="{{ url_for('accueil') }}" method="get">
+                <button type="submit" class="btn"> 
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </button>
+            </form>   
+        </div>
+        <div id="filtermodal" class="modal">
+            <div class="modal-content">
+                <span class="filterclose">&times;</span>
+                <h2>Filtrer</h2>
+                <form method="POST" action="{{ url_for('sort') }}">
+                    <select class="sortselect" id="niveau-select" name="niveau" required onchange="updateMatieres()">
+                        <option value="">Sélectionner un niveau</option>
+                        {% for niveau in niveaux %}
+                            <option value="{{ niveau['id_niveau'] }}">{{ niveau['abreviation'] }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="sortselect" id="matiere-select" name="matiere" required>
+                        <option value="">Sélectionner une matière</option>
+                    </select>
+                    <button style="margin-top: 20px;" type="submit">Appliquer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        /* navbar */
+        const mobileNav = document.querySelector(".hamburger");
+        const navbar = document.querySelector(".menubar");
+
+        const toggleNav = () => {
+        navbar.classList.toggle("active");
+        mobileNav.classList.toggle("hamburger-active");
+        };
+        mobileNav.addEventListener("click", () => toggleNav());
+
+        /* Modal credits: */
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            /* fermeture de la nav bar si c'est un ecran telephone et si elle est ouverte */
+            if (window.innerWidth <= 768 && navbar.classList.contains("active")) {
+                navbar.classList.remove("active");
+                mobileNav.classList.remove("hamburger-active");
+        }
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        const urlParamsbis = new URLSearchParams(window.location.search);
+        if (urlParamsbis.has('modal')) {
+            openModal();  
+        }
+        document.querySelector('.close').addEventListener('click', closeModal);
+        
+        function openfilterModal() {
+            document.getElementById('filtermodal').style.display = 'block';
+        }
+
+        function closefilterModal() {
+            document.getElementById('filtermodal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var filtermodal = document.getElementById('filtermodal');
+            if (event.target == filtermodal) {
+                closefilterModal();
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('filtermodal')) {
+            openfilterModal();  
+        }
+
+        document.querySelector('.filterclose').addEventListener('click', closefilterModal);
+
+        document.getElementById('select').addEventListener('change', function() {
+        var niveauOption = this.querySelector('option[value=""]');
+    
+        if (this.value !== "") {
+        niveauOption.disabled = true;
+        }
+        });
+
+        function updateMatieres() {
+            const niveauId = document.getElementById('niveau-select').value;
+            fetch(`/get-matieres?niveau_id=${niveauId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const matiereSelect = document.getElementById('matiere-select');
+                    matiereSelect.innerHTML = '<option value="">Sélectionner une matière</option>';
+                    data.matieres.forEach(matiere => {
+                        const option = document.createElement('option');
+                        option.value = matiere.id_matiere;
+                        option.textContent = matiere.nom;
+                        matiereSelect.appendChild(option);
+                    });
+                });
+        }
+
+    </script>
+
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <script>
+                alert("{{ message }}");
+            </script>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+{% endblock %}
