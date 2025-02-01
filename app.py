@@ -213,7 +213,10 @@ def login():
     Se connecte à la base de données et connecte l'utilisateurs
     """
     if request.method == 'POST':
-        username = request.form['username']
+        username = " "
+        for c in request.form['username']:
+            if c != ' ':
+                username += c
         password = request.form['password']
 
         conn = get_db_connection()
@@ -261,7 +264,10 @@ def inscription():
     Inscription d'un nouvel utilisateur
     """
     if request.method == 'POST':
-        username = request.form['username']
+        username = " "
+        for c in request.form['username']:
+            if c != ' ':
+                username += c
         email = request.form['email']
         password = generate_password_hash(request.form['password']) 
 
