@@ -201,6 +201,11 @@
     .filterdiv button{
         margin-top: 100px;
     }
+
+    .fiche_item {
+        position: relative;
+        display: inline-block;
+    }
 }
 
 /* pour ecran ordi/tablette */
@@ -292,8 +297,9 @@
     }
     
     .fiche_item {
+        position: relative;
         text-align: center; 
-        display: flex;
+        display: inline-block;
         flex-direction: column; 
         align-items: center; 
         justify-content: flex-start;
@@ -305,7 +311,7 @@
         border: 5px solid #fcafe9;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 2px; 
+        margin-bottom: 2px;
     }
 
     .fiche {
@@ -441,7 +447,7 @@ input {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 100;
     left: 0;
     top: 0;
     width: 100%;
@@ -510,29 +516,6 @@ input {
 .flash-messages {
     margin: 8px;
     text-align: center;
-}
-
-.menu-deroulant {
-    height: 100%; 
-    width: 0; 
-    position: fixed;
-    top: 0;
-    right: 0; 
-    background-color: #fcafe9;
-    overflow-x: hidden; 
-    transition: 0.5s; 
-    padding-top: 60px; 
-    z-index: 1;
-}
-
-.menu-deroulant a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #fff;
-    display: block;
-    transition: 0.3s;
-    margin-top: 8px;
 }
 
 .openbtn {
@@ -775,4 +758,59 @@ nav {
       display: none;
     }
   }
+
+  .addstar {
+    all: unset;
+    position: absolute;
+    top: 10px;
+    right: 195px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .addstar:hover {
+    background-color: rgba(252, 175, 233, 0.8);
+  }
+
+  @media (max-width: 800px) {
+    .addstar {
+        top: 8px;
+        right: 18px;
+    }
+  }
   
+  .removestar {
+    all: unset;
+    position: absolute;
+    top: 10px;
+    right: 195px;
+    background-color: rgba(252, 175, 233, 0.8);
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .removestar:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 800px) {
+    .removestar {
+        top: 8px;
+        right: 18px;
+    }
+  }

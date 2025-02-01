@@ -596,6 +596,19 @@ def other_tags(id_fiche):
 
         return redirect(url_for('checkrequest'))
 
+def infavoris():
+    """
+    Permet d'avoir une liste des fiches qu'un utilisateurs a deja mis en favoris
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?', (session['username'],))
+    id_user = cursor.fetchone()[0]
+    cursor.execute('SELECT id_fiche FROM favoris WHERE id_utilisateur = ?', (id_user,))
+    favoris = [fav[0] for fav in cursor.fetchall()]
+    conn.close()
+    return favoris
+
 @app.route('/fiches')
 def fiches():
     """
@@ -631,7 +644,7 @@ def fiches():
     niveaux = cursor.fetchall()
 
     conn.close()
-    return render_template('fiches.html', fiches=fiches, niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
+    return render_template('fiches.html', fiches=fiches, favoris=infavoris(), niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/fiches/<int:id_fiche>')
 def fiche_detail(id_fiche):
@@ -804,7 +817,7 @@ def search():
             fiches = cursor.fetchall()
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
+            return render_template('fiches.html', fiches=fiches, favoris=infavoris(), reset=1, username=session['username'], perm=check_admin(session['username']))
 
     for niveau, abreviation, nom in matieres:
         abv_init = abreviation
@@ -843,7 +856,7 @@ def search():
             
             conn.close()
 
-            return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
+            return render_template('fiches.html', fiches=fiches, favoris=infavoris(), reset=1, username=session['username'], perm=check_admin(session['username']))
 
     cursor.execute('SELECT id_tag FROM tag WHERE nom_tag = ?', (search,))
     id_tag = cursor.fetchone()
@@ -879,7 +892,7 @@ def search():
     fiches = cursor.fetchall()
     conn.close()
 
-    return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
+    return render_template('fiches.html', fiches=fiches, favoris=infavoris(), reset=1, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/userrequest')
 def userrequest():
@@ -1089,7 +1102,7 @@ def sort():
         fiches = cursor.fetchall()
 
         conn.close()
-        return render_template('fiches.html', fiches=fiches, reset=1, username=session['username'], perm=check_admin(session['username']))
+        return render_template('fiches.html', fiches=fiches, favoris=infavoris(), reset=1, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/addfavorite/<int:id_fiche>')
 def addfavorite(id_fiche):

@@ -30,7 +30,24 @@
                     {% if fiche['img_url'] %}
                         <div class="fiche_item">
                             <a href="/fiches/{{ fiche['id_fiche'] }}">
-                                <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
+                                <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches"> 
+                                {% if fiche['id_fiche'] in favoris %}
+                                    <form action="{{ url_for('removefavorite', id_fiche=fiche['id_fiche']) }}" method="get">
+                                        <button type="submit" class="removestar">
+                                            <span class="material-symbols-outlined">
+                                                star
+                                            </span>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('addfavorite', id_fiche=fiche['id_fiche']) }}" method="get">
+                                        <button type="submit" class="addstar">
+                                            <span class="material-symbols-outlined">
+                                                star
+                                            </span>
+                                        </button>
+                                    </form>
+                                {% endif %}
                             </a>
                             <div class="text">
                                 <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>
