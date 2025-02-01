@@ -990,9 +990,11 @@ def listuser():
             utilisateurs;
     ''')
     utilisateurs = cursor.fetchall() 
+    cursor.execute('SELECT COUNT(*) FROM utilisateurs;')
+    nb_user = cursor.fetchone()[0]
     conn.close()
 
-    return render_template('listuser.html', utilisateurs=utilisateurs, username=session['username'], perm=check_admin(session['username']))   
+    return render_template('listuser.html', utilisateurs=utilisateurs, nb_user=nb_user, username=session['username'], perm=check_admin(session['username']))   
 
 @app.route('/addadmin/<int:id_utilisateur>')
 def addadmin(id_utilisateur):
