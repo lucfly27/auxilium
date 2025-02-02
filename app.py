@@ -70,7 +70,18 @@ matieres = [
         ('2', 'HGGSP', 'Histoire Géographie Géopolitique et Sciences Politiques'),
         ('3', 'HGGSP', 'Histoire Géographie Géopolitique et Sciences Politiques'),
         ('2', 'LLCE', 'Langues Littérature et Civilisations Etrangères'),
-        ('3', 'LLCE', 'Langues Littérature et Civilisations Etrangères')
+        ('3', 'LLCE', 'Langues Littérature et Civilisations Etrangères'),
+        ('2', 'MGT', 'Management'),
+        ('3', 'MGT', 'Management'),
+        ('2', 'DROIT', 'Droit'),
+        ('3', 'DROIT', 'Droit'),
+        ('2', 'ECO', 'Économie'),
+        ('3', 'ECO', 'Économie'),
+        ('2', 'GES', 'Gestion'),
+        ('2', 'GF', 'Gestion Finance'),
+        ('3', 'GF', 'Gestion Finance'),
+        ('3', 'MK', 'Mercatique (Marketing)'),
+        ('3', 'RHC', 'Ressources Humaines')
     ]
 
 def transformer_chaine(chaine):
@@ -213,10 +224,7 @@ def login():
     Se connecte à la base de données et connecte l'utilisateurs
     """
     if request.method == 'POST':
-        username = " "
-        for c in request.form['username']:
-            if c != ' ':
-                username += c
+        username = request.form['username'].strip()
         password = request.form['password']
 
         conn = get_db_connection()
@@ -264,10 +272,7 @@ def inscription():
     Inscription d'un nouvel utilisateur
     """
     if request.method == 'POST':
-        username = " "
-        for c in request.form['username']:
-            if c != ' ':
-                username += c
+        username = request.form['username'].strip()
         email = request.form['email']
         password = generate_password_hash(request.form['password']) 
 
