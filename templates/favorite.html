@@ -25,37 +25,41 @@
             </button>
         </div>
         <div class="element">
-            <div class="container_fiche">
-                {% for fiche in fiches %}
-                    {% if fiche['img_url'] %}
-                        <div class="fiche_item">
-                            <a href="/fiches/{{ fiche['id_fiche'] }}">
-                                <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
-                                <form action="{{ url_for('removefavorite', id_fiche=fiche['id_fiche']) }}" method="get">
-                                    <button type="submit" class="removestar">
-                                        <span class="material-symbols-outlined">
-                                            star
-                                        </span>
-                                    </button>
-                                </form>
-                            </a>
-                            <div class="text">
-                                <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>
-                                    {% if fiche['tags'] %}
-                                        Tags: {{ fiche['tags'] }}
-                                    {% else %}
-                                        Aucun tags pour cette fiche
-                                    {% endif %}
-                                </p>
+            {% if fiches %}
+                <div class="container_fiche">
+                    {% for fiche in fiches %}
+                        {% if fiche['img_url'] %}
+                            <div class="fiche_item">
+                                <a href="/fiches/{{ fiche['id_fiche'] }}">
+                                    <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
+                                    <form action="{{ url_for('removefavorite', id_fiche=fiche['id_fiche']) }}" method="get">
+                                        <button type="submit" class="removestar">
+                                            <span class="material-symbols-outlined">
+                                                star
+                                            </span>
+                                        </button>
+                                    </form>
+                                </a>
+                                <div class="text">
+                                    <p>{{ fiche['nom'] }}, {{ fiche['abreviation'] }} <br>
+                                        {% if fiche['tags'] %}
+                                            Tags: {{ fiche['tags'] }}
+                                        {% else %}
+                                            Aucun tags pour cette fiche
+                                        {% endif %}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    {% else %}
-                        <div class="fiche_item">
-                            <p>Pas d'image</p>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>            
+                        {% else %}
+                            <div class="fiche_item">
+                                <p>Pas d'image</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>           
+            {% else %}
+                <p class="text"> Vous n'avez aucune fiche favorite </p>
+            {% endif %}
         </div>
         <div class="element">
             <form action="{{ url_for('accueil') }}" method="get">
