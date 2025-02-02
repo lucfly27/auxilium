@@ -695,6 +695,7 @@ def fiche_detail(id_fiche):
 
     return render_template('fiche.html', fiche=fiche, username=session['username'], perm=check_admin(session['username'])) 
 
+
 @app.route('/signaler', methods=['GET', 'POST'])
 def signaler():
     """
@@ -1234,6 +1235,44 @@ def favorite():
 
     conn.close()
     return render_template('favorite.html', fiches=fiches, niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
+
+@app.route('/favorite/<int:id_fiche>')
+def favorite_fiche_detail(id_fiche):
+    """
+    Affiche les détails d'une fiche spécifique en fonction de son ID
+    """
+    if 'username' not in session:
+        flash('Veuillez vous connecter d\'abord', 'error')
+        return redirect(url_for('login', modal=True))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT 
+            fiche.id_fiche, 
+            matiere.nom, 
+            niveau.abreviation, 
+            fiche.img_url, 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
+        FROM 
+            fiche
+        JOIN matiere ON matiere.id_matiere = fiche.id_matiere
+        JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
+        LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
+        WHERE 
+            fiche.img_check = 1 AND fiche.id_fiche = ?
+        GROUP BY 
+            fiche.id_fiche;
+    ''', (id_fiche,))
+    fiche = cursor.fetchone()
+    conn.close()
+
+    if fiche is None:
+        flash("Fiche non trouvée", 'error')
+        return redirect(url_for('fiches'))
+
+    return render_template('fiche.html', favoris=True, fiche=fiche, username=session['username'], perm=check_admin(session['username'])) 
 
 if __name__ == '__main__':
     init_db()

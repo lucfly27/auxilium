@@ -30,7 +30,7 @@
                     {% for fiche in fiches %}
                         {% if fiche['img_url'] %}
                             <div class="fiche_item">
-                                <a href="/fiches/{{ fiche['id_fiche'] }}">
+                                <a href="/favorite/{{ fiche['id_fiche'] }}">
                                     <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
                                     <form action="{{ url_for('removefavorite', id_fiche=fiche['id_fiche']) }}" method="get">
                                         <button type="submit" class="removestar">
