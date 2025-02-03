@@ -318,12 +318,8 @@ def supprimerutilisateur(id_user):
             ''', (id_user,))
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='utilisateurs';")
             flash('Utilisateur supprimée avec succés !', 'succes')
-<<<<<<< HEAD
-            print(f'Compte supprimé pour {session['username']}')
-=======
             username = session['username']
             print(f'Compte supprimé pour {username}')
->>>>>>> 3636dc0 (Adapt little things for the host)
         else:
             flash('Utilisateur introuvable', 'error')
 
@@ -542,20 +538,12 @@ def supprimerfiche(id_fiche):
                 try:
                     os.remove(full_image_path)
                     flash(f'Fiche et image supprimées avec succès!', 'success')
-<<<<<<< HEAD
-                    print(f'fiche id:{id_fiche} supprimée par {session['username']}')
-=======
                     print(f'fiche id:{id_fiche} supprimée par {username}')
->>>>>>> 3636dc0 (Adapt little things for the host)
                 except Exception as e:
                     flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
             else:
                 flash('Image associée introuvable, mais fiche supprimée.', 'error')
-<<<<<<< HEAD
-                print(f'fiche id:{id_fiche} supprimée de la bdd pas {session['username']} mais image non trouvée')
-=======
                 print(f'fiche id:{id_fiche} supprimée de la bdd pas {username} mais image non trouvée')
->>>>>>> 3636dc0 (Adapt little things for the host)
         else:
             flash('Fiche introuvable.', 'error')
 
@@ -616,12 +604,8 @@ def other_tags(id_fiche):
             SET img_check = 1
             WHERE id_fiche = ?
         ''', (id_fiche,))
-<<<<<<< HEAD
-        print(f'{session['username']} a accepté la fiche id={id_fiche} en changeant les tags pour {liste_tags}')
-=======
         username = session['username']
         print(f'{username} a accepté la fiche id={id_fiche} en changeant les tags pour {liste_tags}')
->>>>>>> 3636dc0 (Adapt little things for the host)
         conn.commit()
         fiches = cursor.fetchall()
         conn.close()
