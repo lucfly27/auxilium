@@ -120,7 +120,7 @@ def init_db():
             id_niveau INT NOT NULL,
             id_matiere INT NOT NULL,
             img_url TEXT UNIQUE NOT NULL,
-            img_check INTEGER NOT NULL 
+            img_check INTEGER NOT NULL
         );
     ''')
 
@@ -156,7 +156,7 @@ def init_db():
             id_signalement INTEGER PRIMARY KEY AUTOINCREMENT,
             id_utilisateur INT NOT NULL,
             id_fiche INT NOT NULL,
-            message TEXT NOT NULL  
+            message TEXT NOT NULL
         );
     ''')
 
@@ -189,7 +189,7 @@ def init_db():
     for abreviation, nom in niveaux:
         cursor.execute('SELECT COUNT(*) FROM niveau WHERE abreviation = ? AND nom = ?', (abreviation, nom))
         exist = cursor.fetchone()[0]
-    
+
         if not exist:
                 cursor.execute('INSERT INTO niveau (abreviation, nom) VALUES (?, ?)', (abreviation, nom))
 
@@ -201,7 +201,7 @@ def init_db():
         if not exist:
             cursor.execute('INSERT INTO matiere (id_niveau, abreviation, nom) VALUES (?, ?, ?)', (niveau, abreviation, nom))
 
-    conn.commit()  
+    conn.commit()
     conn.close()
 
 def check_admin(username):
@@ -214,7 +214,7 @@ def check_admin(username):
     admin_perm = cursor.fetchone()
     conn.close()
 
-    if admin_perm and admin_perm[0] == 1:  
+    if admin_perm and admin_perm[0] == 1:
         return True
     return False
 
@@ -244,7 +244,7 @@ def login():
             flash('Nom d\'utilisateur non existant', 'error')
             return redirect(url_for('homepage', modal=True))
         conn.close()
-    
+
     return redirect(url_for('homepage', modal=True))
 
 @app.route('/accueil')
@@ -255,7 +255,7 @@ def accueil():
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    
+
     return render_template('accueil.html', username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/logout')
@@ -274,15 +274,15 @@ def inscription():
     if request.method == 'POST':
         username = request.form['username'].strip()
         email = request.form['email']
-        password = generate_password_hash(request.form['password']) 
+        password = generate_password_hash(request.form['password'])
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
         try:
-            cursor.execute('INSERT INTO utilisateurs (username, email, password, admin_perm) VALUES (?, ?, ?, ?)', 
+            cursor.execute('INSERT INTO utilisateurs (username, email, password, admin_perm) VALUES (?, ?, ?, ?)',
                            (username, email, password, 0))
-            conn.commit()  
+            conn.commit()
             print(f'Compte créé avec succès pour {username}!')
             return redirect(url_for('accueil'))
         except sqlite3.IntegrityError:
@@ -318,7 +318,12 @@ def supprimerutilisateur(id_user):
             ''', (id_user,))
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='utilisateurs';")
             flash('Utilisateur supprimée avec succés !', 'succes')
+<<<<<<< HEAD
             print(f'Compte supprimé pour {session['username']}')
+=======
+            username = session['username']
+            print(f'Compte supprimé pour {username}')
+>>>>>>> 3636dc0 (Adapt little things for the host)
         else:
             flash('Utilisateur introuvable', 'error')
 
@@ -378,7 +383,7 @@ def addcard():
                 tag += caractere
         if not tag == '':
             liste_tags.append(tag)
-                            
+
         if image and allowed_file(image.filename):
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -390,17 +395,17 @@ def addcard():
             nom_niveau = nom_niveau['abreviation']
             filename = f"{nom_matiere}_{nom_niveau}_{str(uuid.uuid4())}"
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-   
+
             try:
-                image.save("static/" + image_path) 
+                image.save("static/" + image_path)
                 cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
                 id_user = cursor.fetchone()
                 id_user = id_user['id_utilisateur']
                 cursor.execute(
-                    'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url, img_check) VALUES (?, ?, ?, ?, ?)', 
+                    'INSERT INTO fiche (id_utilisateur, id_matiere, id_niveau, img_url, img_check) VALUES (?, ?, ?, ?, ?)',
                     (id_user, matiere, niveau, image_path, '0')
                 )
-                if len(liste_tags) > 0: 
+                if len(liste_tags) > 0:
                     liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
                     for tag in liste_tags:
                         tag = transformer_chaine(tag)
@@ -445,23 +450,23 @@ def checkrequest():
     elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
             fiche.img_url,
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.img_check = 0
         GROUP BY
             fiche.id_fiche;
@@ -492,7 +497,7 @@ def accepterfiche(id_fiche):
         ''', (id_fiche,))
 
         conn.commit()
-        fiches = cursor.fetchall() 
+        fiches = cursor.fetchall()
         conn.close()
 
         return redirect(url_for('checkrequest'))
@@ -514,7 +519,7 @@ def supprimerfiche(id_fiche):
 
         cursor.execute('SELECT img_url FROM fiche WHERE id_fiche = ?', (id_fiche,))
         fiche = cursor.fetchone()
-        
+
         if fiche:
             image_path = fiche['img_url']
             cursor.execute('DELETE FROM fiche WHERE id_fiche = ?', (id_fiche,))
@@ -531,17 +536,26 @@ def supprimerfiche(id_fiche):
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='fiche';")
             conn.commit()
 
+            username = session['username']
             full_image_path = os.path.join('static', image_path)
             if os.path.exists(full_image_path):
                 try:
                     os.remove(full_image_path)
                     flash(f'Fiche et image supprimées avec succès!', 'success')
+<<<<<<< HEAD
                     print(f'fiche id:{id_fiche} supprimée par {session['username']}')
+=======
+                    print(f'fiche id:{id_fiche} supprimée par {username}')
+>>>>>>> 3636dc0 (Adapt little things for the host)
                 except Exception as e:
                     flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
             else:
                 flash('Image associée introuvable, mais fiche supprimée.', 'error')
+<<<<<<< HEAD
                 print(f'fiche id:{id_fiche} supprimée de la bdd pas {session['username']} mais image non trouvée')
+=======
+                print(f'fiche id:{id_fiche} supprimée de la bdd pas {username} mais image non trouvée')
+>>>>>>> 3636dc0 (Adapt little things for the host)
         else:
             flash('Fiche introuvable.', 'error')
 
@@ -552,7 +566,7 @@ def supprimerfiche(id_fiche):
 @app.route('/othertag/<int:id_fiche>', methods=['GET', 'POST'])
 def other_tags(id_fiche):
     '''
-    Accepte la publication d'une fiche avec son id mais avec d'autre tag que ceux mis par l'utilisateurs 
+    Accepte la publication d'une fiche avec son id mais avec d'autre tag que ceux mis par l'utilisateurs
     '''
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
@@ -586,7 +600,7 @@ def other_tags(id_fiche):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('DELETE FROM fiche_tag WHERE id_fiche = ?', (id_fiche,))
-        if len(liste_tags) > 0: 
+        if len(liste_tags) > 0:
                     liste_tags = [tag.strip() for tag in liste_tags if type(tag) == str]
                     for tag in liste_tags:
                         tag = transformer_chaine(tag)
@@ -602,9 +616,14 @@ def other_tags(id_fiche):
             SET img_check = 1
             WHERE id_fiche = ?
         ''', (id_fiche,))
+<<<<<<< HEAD
         print(f'{session['username']} a accepté la fiche id={id_fiche} en changeant les tags pour {liste_tags}')
+=======
+        username = session['username']
+        print(f'{username} a accepté la fiche id={id_fiche} en changeant les tags pour {liste_tags}')
+>>>>>>> 3636dc0 (Adapt little things for the host)
         conn.commit()
-        fiches = cursor.fetchall() 
+        fiches = cursor.fetchall()
         conn.close()
 
         return redirect(url_for('checkrequest'))
@@ -630,28 +649,28 @@ def fiches():
     if 'username' not in session:
         flash('Veuillez vous connecter d\'abord', 'error')
         return redirect(url_for('login', modal=True))
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
-            fiche.img_url, 
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.img_check = 1
-        GROUP BY 
+        GROUP BY
             fiche.id_fiche;
     ''')
-    fiches = cursor.fetchall() 
+    fiches = cursor.fetchall()
 
     cursor.execute('SELECT id_niveau, abreviation FROM niveau')
     niveaux = cursor.fetchall()
@@ -671,21 +690,21 @@ def fiche_detail(id_fiche):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
-            fiche.img_url, 
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.img_check = 1 AND fiche.id_fiche = ?
-        GROUP BY 
+        GROUP BY
             fiche.id_fiche;
     ''', (id_fiche,))
     fiche = cursor.fetchone()
@@ -695,7 +714,7 @@ def fiche_detail(id_fiche):
         flash("Fiche non trouvée", 'error')
         return redirect(url_for('fiches'))
 
-    return render_template('fiche.html', fiche=fiche, username=session['username'], perm=check_admin(session['username'])) 
+    return render_template('fiche.html', fiche=fiche, username=session['username'], perm=check_admin(session['username']))
 
 
 @app.route('/signaler', methods=['GET', 'POST'])
@@ -719,7 +738,7 @@ def signaler():
             id_user = cursor.fetchone()
             id_user = id_user['id_utilisateur']
             cursor.execute(
-                'INSERT INTO signalements (id_utilisateur, id_fiche, message) VALUES (?, ?, ?)', 
+                'INSERT INTO signalements (id_utilisateur, id_fiche, message) VALUES (?, ?, ?)',
                 (id_user, id_fiche, message)
             )
             conn.commit()
@@ -746,11 +765,11 @@ def checkreport():
     elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT signalements.id_signalement, utilisateurs.username, signalements.message, fiche.id_fiche, fiche.img_url  
+        SELECT signalements.id_signalement, utilisateurs.username, signalements.message, fiche.id_fiche, fiche.img_url
         FROM signalements
         JOIN utilisateurs ON utilisateurs.id_utilisateur = signalements.id_utilisateur
         JOIN fiche ON fiche.id_fiche = signalements.id_fiche;
@@ -771,7 +790,7 @@ def ignorer_signalement(id_signalement):
     elif not check_admin(session['username']):
         flash("Vous ne pouvez pas accéder à ceci", 'error')
         return redirect(url_for('fiches'))
-    try: 
+    try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('DELETE FROM signalements WHERE id_signalement = ?', (id_signalement,))
@@ -781,7 +800,7 @@ def ignorer_signalement(id_signalement):
         flash("Erreur: Fiche non signalée", 'error')
     finally:
         if conn:
-            conn.close()        
+            conn.close()
     return redirect(url_for('checkreport'))
 
 @app.route('/search')
@@ -797,7 +816,7 @@ def search():
     search = transformer_chaine(search)
     if not search:
         return redirect(url_for('accueil'))
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     for abreviation, nom in niveaux:
@@ -808,22 +827,22 @@ def search():
                 cursor.execute('SELECT id_niveau FROM niveau WHERE nom = ?', (search,))
             id_niveau = cursor.fetchone()
             cursor.execute('''
-                SELECT 
-                    fiche.id_fiche, 
-                    matiere.nom, 
-                    niveau.abreviation, 
-                    fiche.img_url, 
-                    GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-                FROM 
+                SELECT
+                    fiche.id_fiche,
+                    matiere.nom,
+                    niveau.abreviation,
+                    fiche.img_url,
+                    GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+                FROM
                     fiche
                 JOIN matiere ON matiere.id_matiere = fiche.id_matiere
                 JOIN niveau ON niveau.id_niveau = fiche.id_niveau
                 LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
                 LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-                WHERE 
+                WHERE
                     fiche.img_check = 1
                     AND fiche.id_niveau = ?
-                GROUP BY 
+                GROUP BY
                     fiche.id_fiche;
             ''', (id_niveau[0],))
 
@@ -846,27 +865,27 @@ def search():
             fiches = []
             for id_m in id_matieres:
                 cursor.execute('''
-                    SELECT 
-                        fiche.id_fiche, 
-                        matiere.nom, 
-                        niveau.abreviation, 
-                        fiche.img_url, 
-                        GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-                    FROM 
+                    SELECT
+                        fiche.id_fiche,
+                        matiere.nom,
+                        niveau.abreviation,
+                        fiche.img_url,
+                        GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+                    FROM
                         fiche
                     JOIN matiere ON matiere.id_matiere = fiche.id_matiere
                     JOIN niveau ON niveau.id_niveau = fiche.id_niveau
                     LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
                     LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-                    WHERE 
+                    WHERE
                         fiche.img_check = 1
                         AND fiche.id_matiere = ?
-                    GROUP BY 
+                    GROUP BY
                         fiche.id_fiche;
                 ''', (id_m[0],))
 
                 fiches += cursor.fetchall()
-            
+
             conn.close()
 
             return render_template('fiches.html', fiches=fiches, favoris=infavoris(), reset=1, username=session['username'], perm=check_admin(session['username']))
@@ -883,22 +902,22 @@ def search():
             return redirect(url_for('accueil'))
 
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
-            fiche.img_url, 
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.img_check = 1
             AND fiche_tag.id_tag = ?
-        GROUP BY 
+        GROUP BY
             fiche.id_fiche;
     ''', (id_tag[0],))
 
@@ -922,20 +941,20 @@ def userrequest():
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username  = ?', (username,))
     id_utilisateur = cursor.fetchone()
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
             fiche.img_url,
             fiche.img_check,
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.id_utilisateur = ?
         GROUP BY
             fiche.id_fiche;
@@ -960,17 +979,17 @@ def userreport():
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username  = ?', (username,))
     id_utilisateur = cursor.fetchone()[0]
     cursor.execute('''
-        SELECT 
-            signalements.id_signalement, 
-            utilisateurs.username, 
-            signalements.message, 
-            fiche.id_fiche, 
-            fiche.img_url  
-        FROM 
+        SELECT
+            signalements.id_signalement,
+            utilisateurs.username,
+            signalements.message,
+            fiche.id_fiche,
+            fiche.img_url
+        FROM
             signalements
         JOIN utilisateurs ON utilisateurs.id_utilisateur = signalements.id_utilisateur
         JOIN fiche ON fiche.id_fiche = signalements.id_fiche
-        WHERE 
+        WHERE
             utilisateurs.id_utilisateur = ?;
     ''', (id_utilisateur,))
     signalements = cursor.fetchall()
@@ -994,20 +1013,20 @@ def listuser():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
+        SELECT
             id_utilisateur,
             username,
             email,
             admin_perm
-        FROM 
+        FROM
             utilisateurs;
     ''')
-    utilisateurs = cursor.fetchall() 
+    utilisateurs = cursor.fetchall()
     cursor.execute('SELECT COUNT(*) FROM utilisateurs;')
     nb_user = cursor.fetchone()[0]
     conn.close()
 
-    return render_template('listuser.html', utilisateurs=utilisateurs, nb_user=nb_user, username=session['username'], perm=check_admin(session['username']))   
+    return render_template('listuser.html', utilisateurs=utilisateurs, nb_user=nb_user, username=session['username'], perm=check_admin(session['username']))
 
 @app.route('/addadmin/<int:id_utilisateur>')
 def addadmin(id_utilisateur):
@@ -1023,11 +1042,11 @@ def addadmin(id_utilisateur):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            admin_perm 
-        FROM 
-            utilisateurs 
-        WHERE 
+        SELECT
+            admin_perm
+        FROM
+            utilisateurs
+        WHERE
             id_utilisateur = ?;
     ''', (id_utilisateur,))
     perm = cursor.fetchone()[0]
@@ -1059,11 +1078,11 @@ def removeadmin(id_utilisateur):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            admin_perm 
-        FROM 
-            utilisateurs 
-        WHERE 
+        SELECT
+            admin_perm
+        FROM
+            utilisateurs
+        WHERE
             id_utilisateur = ?;
     ''', (id_utilisateur,))
     perm = cursor.fetchone()[0]
@@ -1095,23 +1114,23 @@ def sort():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            SELECT 
-                fiche.id_fiche, 
-                matiere.nom, 
-                niveau.abreviation, 
-                fiche.img_url, 
-                GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-            FROM 
+            SELECT
+                fiche.id_fiche,
+                matiere.nom,
+                niveau.abreviation,
+                fiche.img_url,
+                GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+            FROM
                 fiche
             JOIN matiere ON matiere.id_matiere = fiche.id_matiere
             JOIN niveau ON niveau.id_niveau = fiche.id_niveau
             LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
             LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-            WHERE 
+            WHERE
                 niveau.id_niveau = ?
             AND
                 matiere.id_matiere = ?
-            GROUP BY 
+            GROUP BY
                 fiche.id_fiche;
         ''', (niveau, matiere))
         fiches = cursor.fetchall()
@@ -1174,13 +1193,13 @@ def removefavorite(id_fiche):
         flash('Vos favoris ne contienne pas cette fiche')
         return redirect(url_for('fiches'))
     cursor.execute('''
-    SELECT 
-        id_favori 
-    FROM 
-        favoris 
-    WHERE 
+    SELECT
+        id_favori
+    FROM
+        favoris
+    WHERE
         id_utilisateur = ?
-    AND 
+    AND
         id_fiche = ?
     ''', (id_user, id_fiche,))
     try:
@@ -1214,25 +1233,25 @@ def favorite():
     cursor.execute('SELECT id_utilisateur FROM utilisateurs WHERE username = ?', (session['username'],))
     id_user = cursor.fetchone()[0]
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
-            fiche.img_url, 
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             favoris
         JOIN fiche ON fiche.id_fiche = favoris.id_fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             favoris.id_utilisateur = ?
-        GROUP BY 
+        GROUP BY
             favoris.id_favori;
     ''', (id_user,))
-    fiches = cursor.fetchall() 
+    fiches = cursor.fetchall()
 
     conn.close()
     return render_template('favorite.html', fiches=fiches, niveaux=niveaux, username=session['username'], perm=check_admin(session['username']))
@@ -1249,21 +1268,21 @@ def favorite_fiche_detail(id_fiche):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT 
-            fiche.id_fiche, 
-            matiere.nom, 
-            niveau.abreviation, 
-            fiche.img_url, 
-            GROUP_CONCAT(tag.nom_tag, ', ') AS tags 
-        FROM 
+        SELECT
+            fiche.id_fiche,
+            matiere.nom,
+            niveau.abreviation,
+            fiche.img_url,
+            GROUP_CONCAT(tag.nom_tag, ', ') AS tags
+        FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
-        WHERE 
+        WHERE
             fiche.img_check = 1 AND fiche.id_fiche = ?
-        GROUP BY 
+        GROUP BY
             fiche.id_fiche;
     ''', (id_fiche,))
     fiche = cursor.fetchone()
@@ -1273,7 +1292,7 @@ def favorite_fiche_detail(id_fiche):
         flash("Fiche non trouvée", 'error')
         return redirect(url_for('fiches'))
 
-    return render_template('fiche.html', favoris=True, fiche=fiche, username=session['username'], perm=check_admin(session['username'])) 
+    return render_template('fiche.html', favoris=True, fiche=fiche, username=session['username'], perm=check_admin(session['username']))
 
 if __name__ == '__main__':
     init_db()
