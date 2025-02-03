@@ -318,7 +318,7 @@ def supprimerutilisateur(id_user):
             ''', (id_user,))
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='utilisateurs';")
             flash('Utilisateur supprimée avec succés !', 'succes')
-            print(f'Utilisateur id={id_user} supprimée')
+            print(f'Compte supprimé pour {session['username']}')
         else:
             flash('Utilisateur introuvable', 'error')
 
@@ -425,6 +425,7 @@ def addcard():
                     conn.close()
         else:
             flash('Type de fichier non autorisé', 'error')
+            print(f"{username} a essayé d'ajouter une fiche en format {filename.rsplit('.', 1)[1].lower()}")
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -534,13 +535,13 @@ def supprimerfiche(id_fiche):
             if os.path.exists(full_image_path):
                 try:
                     os.remove(full_image_path)
-                    flash('Fiche et image supprimées avec succès!', 'success')
-                    print(f'fiche id:{id_fiche} supprimée')
+                    flash(f'Fiche et image supprimées avec succès!', 'success')
+                    print(f'fiche id:{id_fiche} supprimée par {session['username']}')
                 except Exception as e:
                     flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
             else:
                 flash('Image associée introuvable, mais fiche supprimée.', 'error')
-                print(f'fiche id:{id_fiche} supprimée de la bdd mais image non trouvée')
+                print(f'fiche id:{id_fiche} supprimée de la bdd pas {session['username']} mais image non trouvée')
         else:
             flash('Fiche introuvable.', 'error')
 
@@ -601,6 +602,7 @@ def other_tags(id_fiche):
             SET img_check = 1
             WHERE id_fiche = ?
         ''', (id_fiche,))
+        print(f'{session['username']} a accepté la fiche id={id_fiche} en changeant les tags pour {liste_tags}')
         conn.commit()
         fiches = cursor.fetchall() 
         conn.close()
@@ -722,15 +724,14 @@ def signaler():
             )
             conn.commit()
             flash("Fiche bien signaler, on vous remercie de participer au bon fonctionnement du site !")
+            username = session['username']
+            print(f"{username} vient de signaler une fiche")
         except Exception as e:
             print(f"Erreur: {str(e)}")
             flash("Erreur: Fiche non signalée", 'error')
         finally:
             if conn:
                 conn.close()
-
-    username = session['username']
-    print(f"{username} vient de signaler une fiche")
 
     return redirect(url_for('fiches', id_fiche = id_fiche, username=session['username'], perm=check_admin(session['username'])))
 
