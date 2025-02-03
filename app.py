@@ -76,7 +76,7 @@ matieres = [
         ('3', 'HGGSP', 'Histoire Géographie Géopolitique et Sciences Politiques'),
         ('2', 'LLCE', 'Langues Littérature et Civilisations Etrangères'),
         ('3', 'LLCE', 'Langues Littérature et Civilisations Etrangères'),
-        ('3', 'DGEMC', 'Droit et grands enjeux du monde contemporain')
+        ('3', 'DGEMC', 'Droit et grands enjeux du monde contemporain'),
         ('2', 'MGT', 'Management'),
         ('3', 'MGT', 'Management'),
         ('2', 'DROIT', 'Droit'),
