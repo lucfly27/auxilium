@@ -316,6 +316,8 @@ def supprimerutilisateur(id_user):
         exist = cursor.fetchall()
 
         if exist:
+            cursor.execute('SELECT username FROM utilisateurs WHERE id_utilisateur = ?', (id_user,))
+            username = cursor.fetchone()[0]
             cursor.execute('DELETE FROM utilisateurs WHERE id_utilisateur = ?', (id_user,))
             cursor.execute('''
                 UPDATE utilisateurs
@@ -324,7 +326,6 @@ def supprimerutilisateur(id_user):
             ''', (id_user,))
             cursor.execute("DELETE FROM sqlite_sequence WHERE name='utilisateurs';")
             flash('Utilisateur supprimée avec succés !', 'succes')
-            username = session['username']
             print(f'Compte supprimé pour {username}')
         else:
             flash('Utilisateur introuvable', 'error')
@@ -399,7 +400,7 @@ def addcard():
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
             try:
-                image.save("static/" + image_path)
+                image.save("mysite/static/" + image_path)
                 cursor.execute('SELECT * FROM utilisateurs WHERE username = ?', (username,))
                 id_user = cursor.fetchone()
                 id_user = id_user['id_utilisateur']
@@ -461,11 +462,13 @@ def checkrequest():
             matiere.nom,
             niveau.abreviation,
             fiche.img_url,
+            utilisateurs.username,
             GROUP_CONCAT(tag.nom_tag, ', ') AS tags
         FROM
             fiche
         JOIN matiere ON matiere.id_matiere = fiche.id_matiere
         JOIN niveau ON niveau.id_niveau = fiche.id_niveau
+        JOIN utilisateurs ON utilisateurs.id_utilisateur = fiche.id_utilisateur
         LEFT JOIN fiche_tag ON fiche_tag.id_fiche = fiche.id_fiche
         LEFT JOIN tag ON fiche_tag.id_tag = tag.id_tag
         WHERE
@@ -539,7 +542,7 @@ def supprimerfiche(id_fiche):
             conn.commit()
 
             username = session['username']
-            full_image_path = os.path.join('static', image_path)
+            full_image_path = os.path.join('mysite/static', image_path)
             if os.path.exists(full_image_path):
                 try:
                     os.remove(full_image_path)
@@ -1047,8 +1050,10 @@ def addadmin(id_utilisateur):
             WHERE id_utilisateur = ?;
         ''', (id_utilisateur,))
         conn.commit()
+        cursor.execute('SELECT username FROM utilisateurs WHERE id_utilisateur = ?', (id_utilisateur,))
+        username = cursor.fetchone()[0]
         flash("Permission administrateur ajoutée")
-        print(f"Utilisateurs id={id_utilisateur}, username={session['username']} est maintenant admin")
+        print(f"Utilisateurs id={id_utilisateur}, username={username} est maintenant admin")
     else:
         flash("Cette utilisateur est deja admin")
     conn.close()
@@ -1083,8 +1088,10 @@ def removeadmin(id_utilisateur):
             WHERE id_utilisateur = ?;
         ''', (id_utilisateur,))
         conn.commit()
+        cursor.execute('SELECT username FROM utilisateurs WHERE id_utilisateur = ?', (id_utilisateur,))
+        username = cursor.fetchone()[0]
         flash("Permission administrateur retirée")
-        print(f"Utilisateurs id={id_utilisateur}, username={session['username']} n'est maintenant plus admin")
+        print(f"Utilisateurs id={id_utilisateur}, username={username} n'est maintenant plus admin")
     else:
         flash("Cette utilisateur est pas admin")
     conn.close()

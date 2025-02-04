@@ -210,6 +210,7 @@
 
 /* pour ecran ordi/tablette */
 @media (min-width: 800px) {
+
     .text {
         display: flex;
         justify-content: center;

@@ -14,7 +14,12 @@
                                         <img src="{{ url_for('static', filename=fiche['img_url']) }}" alt="{{ fiche['matiere'] }}" class="fiches">
                                     </a>                            
                                     <a class="text">{{ fiche['nom'] }}, {{ fiche['abreviation'] }}</a>
-                                    <a class="text">Tags: {{ fiche['tags'] }}</a> 
+                                    {% if fiche['tags'] %}
+                                        <a class="text">Tags: {{ fiche['tags'] }}</a> 
+                                    {% else %}
+                                        <a class="text">Aucun tag pour cette fiche</a>
+                                    {% endif %}
+                                    <a class="text"> Fiche proposée par {{ fiche['username'] }}</a>
                                     <form method="post" action="{{ url_for('other_tags', id_fiche=fiche['id_fiche']) }}" enctype="multipart/form-data">
                                         <input class="sign" name="tags" placeholder="Modifier les tags ?" required>
                                         <button type="submit" style="background-color: blue;">
