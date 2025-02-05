@@ -112,7 +112,7 @@
   function openModal() {
       document.getElementById('modal').style.display = 'block';
       /* fermeture de la nav bar si c'est un ecran telephone et si elle est ouverte */
-      if (window.innerWidth <= 768 && navbar.classList.contains("active")) {
+      if (window.innerWidth <= 1300 && navbar.classList.contains("active")) {
         navbar.classList.remove("active");
         mobileNav.classList.remove("hamburger-active");
   }

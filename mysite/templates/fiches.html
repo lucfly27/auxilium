@@ -68,11 +68,13 @@
                     {% endfor %}
                 </div> 
             {% else %}
-                {% if reset == 1 %}
-                    <p class="text"> Aucune fiche pour cette recherche </p>
-                {% else %}
-                    <p class="text"> Aucune fiche pour le moment </p>
-                {% endif %}
+                <div class="title">
+                    {% if reset == 1 %}
+                        <p class="text"> Aucune fiche pour cette recherche </p>
+                    {% else %}
+                        <p class="text"> Aucune fiche pour le moment </p>
+                    {% endif %}
+                </div>
             {% endif %}
            
         </div>
@@ -121,7 +123,7 @@
         function openModal() {
             document.getElementById('modal').style.display = 'block';
             /* fermeture de la nav bar si c'est un ecran telephone et si elle est ouverte */
-            if (window.innerWidth <= 768 && navbar.classList.contains("active")) {
+            if (window.innerWidth <= 1300 && navbar.classList.contains("active")) {
                 navbar.classList.remove("active");
                 mobileNav.classList.remove("hamburger-active");
         }
