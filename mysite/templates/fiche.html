@@ -23,7 +23,7 @@
                 </form>  
             {% endif %} 
         </div>
-        <div class="element">
+        <div class="returnelement">
             <h1>Fiche: {{ fiche['nom'] }}, {{ fiche['abreviation'] }}</h1>
             <p class="text">
                 {% if fiche['tags'] %}
@@ -34,10 +34,10 @@
             </p>
         </div>
         <div class="element">
-            <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiche">
-            <a href="{{ url_for('static', filename=fiche['img_url']) }}" download="fiche_Auxilium.png" style="text-decoration: none; color: inherit;">
+            <img src="{{ url_for('static', filename=fiche['img_url']) }}" class="fiche">        
+            <a href="{{ url_for('static', filename=fiche['img_url']) }}" download="" style="text-decoration: none; color: inherit;"> 
                 <button>Télécharger</button>
-            </a>            
+            </a>
             <button id="openModalBtn" onclick="openreportModal()">
                 Signaler
             </button>

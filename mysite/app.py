@@ -353,7 +353,7 @@ def allowed_file(filename):
     """
     Vérifie si le fichier est au bon format pour etre une image
     """
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 @app.route('/addcard', methods=['GET', 'POST'])
 def addcard():
@@ -396,7 +396,7 @@ def addcard():
             cursor.execute("SELECT abreviation FROM niveau WHERE id_niveau = ?", (niveau,))
             nom_niveau = cursor.fetchone()
             nom_niveau = nom_niveau['abreviation']
-            filename = f"{nom_matiere}_{nom_niveau}_{str(uuid.uuid4())}"
+            filename = f"{nom_matiere}_{nom_niveau}_{str(uuid.uuid4())}.{image.filename.rsplit('.', 1)[1].lower()}"
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
             try:
@@ -552,7 +552,7 @@ def supprimerfiche(id_fiche):
                     flash(f"Erreur lors de la suppression de l'image: {str(e)}", 'error')
             else:
                 flash('Image associée introuvable, mais fiche supprimée.', 'error')
-                print(f'fiche id:{id_fiche} supprimée de la bdd pas {username} mais image non trouvée')
+                print(f'fiche id:{id_fiche} supprimée de la bdd par {username} mais image non trouvée')
         else:
             flash('Fiche introuvable.', 'error')
 
